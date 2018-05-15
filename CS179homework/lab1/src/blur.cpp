@@ -1,6 +1,6 @@
-/* 
+/*
  * CUDA blur
- * Kevin Yuh, 2014 
+ * Kevin Yuh, 2014
  * Revised by Nailen Matschke, 2016
  * Revised by Loko Kung, 2018
  */
@@ -27,11 +27,11 @@ using std::endl;
 const float PI = 3.14159265358979;
 
 #if AUDIO_ON
-#include <sndfile.h>
+//#include <sndfile.h>
 #endif
 
 float gaussian(float x, float mean, float std) {
-    return (1 / (std * sqrt(2 * PI))) 
+    return (1 / (std * sqrt(2 * PI)))
         * exp(-1.0 / 2.0 * pow((x - mean) / std, 2));
 }
 
@@ -58,8 +58,8 @@ void check_args(int argc, char **argv) {
 /*
  * Reads in audio data (alternatively, generates random data), and convolves
  * each channel with the specified filtering function h[n], producing output
- * data. 
- * 
+ * data.
+ *
  * Uses both CPU and GPU implementations, and compares the results.
  */
 int large_gauss_test(int argc, char **argv) {
@@ -159,7 +159,7 @@ int large_gauss_test(int argc, char **argv) {
         for (int i = 0; i < n_frames; i++)
             input_data[i] = ((float) rand()) / RAND_MAX;
     #endif
-        
+
         // CPU Blurring
         cout << "CPU blurring..." << endl;
 
@@ -175,11 +175,11 @@ int large_gauss_test(int argc, char **argv) {
         {
             for (int i = 0; i < GAUSSIAN_SIZE; i++) {
                 for (int j = 0; j <= i; j++)
-                    output_data_host[i] += input_data[i - j] * blur_v[j]; 
+                    output_data_host[i] += input_data[i - j] * blur_v[j];
             }
             for (int i = GAUSSIAN_SIZE; i < n_frames; i++) {
                 for (int j = 0; j < GAUSSIAN_SIZE; j++)
-                    output_data_host[i] += input_data[i - j] * blur_v[j]; 
+                    output_data_host[i] += input_data[i - j] * blur_v[j];
             }
         }
 
@@ -209,7 +209,7 @@ int large_gauss_test(int argc, char **argv) {
         for (int i = 0; i < n_frames; i++) {
             if (fabs(output_data_host[i] - output_data[i]) < 1e-6) {
             #if 0
-                cout << "Correct output at index " << i << ": " << output_data_host[i] << ", " 
+                cout << "Correct output at index " << i << ": " << output_data_host[i] << ", "
                     << output_data[i] << endl;
             #endif
             }
@@ -257,7 +257,7 @@ int large_gauss_test(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    sf_write_float(out_file, all_channel_output, amt_read); 
+    sf_write_float(out_file, all_channel_output, amt_read);
     sf_close(in_file);
     sf_close(out_file);
 
@@ -270,5 +270,3 @@ int large_gauss_test(int argc, char **argv) {
 int main(int argc, char **argv) {
     return large_gauss_test(argc, argv);
 }
-
-
