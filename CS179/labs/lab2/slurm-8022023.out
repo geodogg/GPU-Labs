@@ -1,1 +1,0 @@
-/var/spool/slurmd/job8022023/slurm_script: line 6: 107807 Segmentation fault      (core dumped) ./transpose

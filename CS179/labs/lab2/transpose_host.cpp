@@ -6,7 +6,7 @@
 
 
 #include <cooperative_groups.h>
-#include <helper_functions.h>
+//#include <helper_functions.h>
 #include <helper_cuda.h>
 #include "transpose_device.cuh"
 #include "ta_utilities.hpp"
