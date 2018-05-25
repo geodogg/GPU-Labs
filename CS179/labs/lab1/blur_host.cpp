@@ -9,6 +9,8 @@
 #include <cuda_runtime.h>
 #include <algorithm>
 #include <cassert>
+#include <cooperative_groups.h>
+#include <helper_cuda.h>
 
 #include "blur_device.cuh"
 
@@ -355,5 +357,3 @@ int large_gauss_test(int argc, char **argv) {
 int main(int argc, char **argv) {
     return large_gauss_test(argc, argv);
 }
-
-
