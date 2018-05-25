@@ -60,13 +60,14 @@ void check_args(int argc, char **argv) {
         cerr << "Incorrect number of arguments.\n";
         cerr << "Arguments: <threads per block> <max number of blocks> " <<
             "<input file> <output file>\n";
-        exit(EXIT_FAILURE);
+//        exit(EXIT_FAILURE);
     }
 #else
     if (argc != 3) {
         cerr << "Incorrect number of arguments.\n";
         cerr << "Arguments: <threads per block> <max number of blocks>\n";
-        exit(EXIT_FAILURE);
+        cerr << "There is no error.\n";
+//        exit(EXIT_FAILURE);
     }
 #endif
 }
