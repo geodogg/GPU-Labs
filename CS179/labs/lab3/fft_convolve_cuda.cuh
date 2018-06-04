@@ -7,6 +7,7 @@
 
 
 #include <cufft.h>
+#include <cooperative_groups.h>
 
 void cudaCallProdScaleKernel(const unsigned int blocks,
         const unsigned int threadsPerBlock,
