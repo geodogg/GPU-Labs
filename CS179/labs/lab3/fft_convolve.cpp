@@ -661,5 +661,3 @@ int large_gauss_test(int argc, char **argv){
 int main(int argc, char **argv){
     return large_gauss_test(argc, argv);
 }
-
-

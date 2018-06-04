@@ -235,7 +235,7 @@ TARGETS = fft_convolve
 
 all: $(TARGETS)
 
-fft_convolve: fft_convolve.cc fft_convolve.o
+fft_convolve: fft_convolve.cpp fft_convolve.o
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) vmkdir -p ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 	$(EXEC) cp $@ ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
