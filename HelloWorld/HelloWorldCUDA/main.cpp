@@ -79,16 +79,28 @@ int main(int argc, char * argv[]){
     gpuErrchk(cudaMemcpy( d_b, b, N, cudaMemcpyHostToDevice));
     gpuErrchk(cudaMemcpy( d_c, c, N, cudaMemcpyHostToDevice));
 
+    printline("Check\n")
+
     clock_t tic = clock();  // start clocking
+
+    printline("Check\n")
 
     int sizeBlock = 256;
     int numBlocks = 1;
 //    scanf("Please enter number of threads per block:%i\n", sizeBlock);
     numBlocks = (N + sizeBlock - 1) / sizeBlock;
+
+    printline("Check\n")
+
+
     DeviceKernel( numBlocks, sizeBlock, N, d_c, d_a, d_b);  // vector addition on DEVICE
+
+    printline("Check\n")
 
     // Wait for GPU to finish before accessing on host
     cudaDeviceSynchronize();
+
+    printline("Check\n")
 
     // Copy result from device memory to host memory
     gpuErrchk(cudaMemcpy( c, d_c, N, cudaMemcpyDeviceToHost));
@@ -97,6 +109,8 @@ int main(int argc, char * argv[]){
 
     clock_t toc = clock() - tic;
     float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;
+
+    printline("Check\n")
 
     printf("Vector addition on the HOST\nElapsed time: %f (sec)\n", elapsed_time);
 
