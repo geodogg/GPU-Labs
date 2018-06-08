@@ -1,7 +1,7 @@
-#include <stdio.h>
+#include <cstdio>
+#include <cassert>  // useful for debugging
 #include <cstdlib>
 #include <ctime>
-#include <string>
 
 // cuda library
 #include <cuda_runtime.h>
