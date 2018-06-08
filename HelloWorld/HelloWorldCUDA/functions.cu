@@ -7,7 +7,7 @@ void KernelAdd(int n, float * p_sum, float * x, float * y){
 
   //int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-  for (int i = index; i < n; i++)
+  for (int i = 0; i < n; i++)
     p_sum[i] = x[i] + y[i];
 
 }
