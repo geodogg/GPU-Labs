@@ -1,5 +1,4 @@
 #include <stdio.h>
-// cuda library
 #include <cuda_runtime.h>
 
 __global__
