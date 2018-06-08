@@ -257,7 +257,7 @@ run: build
 	$(EXEC) ./hello
 
 clean:
-	rm -f hello *.o
+	rm -f hello *.o debug.txt
 	rm -rf ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)/hello
 
 clobber: clean

@@ -32,9 +32,9 @@ int main(int argc, char * argv[]){
 
     // outfile for debugging
     FILE * outfile;
-    outfile = fopen("debug.txt", 'w');
+    outfile = fopen("debug.txt", "w");
     if (outfile == NULL){
-      printf("\n\n\n\n.....there is an error opening debug file....\n\n\n\n")
+      printf("\n\n\n\n.....there is an error opening debug file....\n\n\n\n");
       return 0;
     }
 
