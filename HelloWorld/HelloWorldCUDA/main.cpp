@@ -65,10 +65,10 @@ int main(int argc, char * argv[]){
 
     clock_t tic = clock();  // start clocking
 
-    int sizeBlock;
-    int numBlocks;
-    scanf("Please enter numebr of threads per block:%i\n", sizeBlock);
-    numBlocks = (N + sizeBlock - 1) / sizeBlock;
+    int sizeBlock = 1;
+    int numBlocks = 1;
+//    scanf("Please enter numebr of threads per block:%i\n", sizeBlock);
+//    numBlocks = (N + sizeBlock - 1) / sizeBlock;
     KernelAdd<<<numBlocks, sizeBlock>>> (N, d_c, d_a, d_b);  // vector addition on DEVICE
 
     // Wait for GPU to finish before accessing on host
