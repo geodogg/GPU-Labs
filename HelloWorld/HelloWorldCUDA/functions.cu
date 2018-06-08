@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
-#include <functions.cuh>
+#include "functions.cuh"
 
 __global__
 void KernelAdd(int n, float * p_sum, float * x, float * y){
