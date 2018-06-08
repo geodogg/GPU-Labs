@@ -11,6 +11,7 @@ void KernelAdd(int n, float * p_sum, float * x, float * y){
     p_sum[i] = x[i] + y[i];
 
   return;
+  }
 }
 
 void DeviceKernel(int numBlocks, int sizeBlock, int n, float * p_sum, float * x, float * y){
