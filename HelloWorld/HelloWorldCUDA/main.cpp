@@ -22,7 +22,7 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 
 // outputs debugging macro
 #define printline(ans) { if (ans == true)
-    fprintf(ans);
+    fprintf(outfile, ans);
     fprintf(outfile, "\nfile: %s line: %s", __FILE__, __LINE__)}
 // argc - argument count is the number of parameters passed plus one more
 //        parameter which is the name of the program that was executed. This is
@@ -31,13 +31,13 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 int main(int argc, char * argv[]){
     // debugging outfile
     FILE * outfile;
-    outfile = fopen("debug.txt", "w");
+    outfile = fopen("./debug.txt", "w");
 
     printline("Running program: %s\n", argv[0]);
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.");
 
     int N = 1 << 20;  // approximately a million elements
-    printline();
+    printline(0);
     // generate vectors for addition on HOST
     float * c = new float[N]; // allocate memory of million floats on HOST
     if ( c == NULL ) exit (1);  // error check
