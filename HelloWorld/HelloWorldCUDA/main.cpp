@@ -16,7 +16,6 @@ using namespace std;
 inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort = true){
   if (code != cudaSuccess){
     fprintf(stderr, "gpuAssert: %s %s %d\n", cudaGetErrorString(code), file, line);
-    if(fprintf(outfile, "gpuAssert: %s %s %d\n", cudaGetErrorString(code), file, line));
     exit(code);
   }
 }
