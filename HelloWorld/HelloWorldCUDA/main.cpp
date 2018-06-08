@@ -32,12 +32,12 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 int main(int argc, char * argv[]){
     // debugging outfile
     FILE * outfile;
-    outfile = fopen("./debug.txt", 'w');
+    outfile = fopen("debug.txt", 'w');
     if (!outfile.good()){
       printf("\n\n\n\n.....there is an error....\n\n\n\n");
     }
 
-    printline("Running program: %s\n", argv[0]);
+    printf("Running program: %s\n", argv[0]);
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.");
 
     int N = 1 << 20;  // approximately a million elements
