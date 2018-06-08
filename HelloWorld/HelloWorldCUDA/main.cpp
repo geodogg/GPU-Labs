@@ -85,13 +85,12 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
-    int sizeBlock = 256;
+    int sizeBlock = 1;
     int numBlocks = 1;
 //    scanf("Please enter number of threads per block:%i\n", sizeBlock);
     numBlocks = (N + sizeBlock - 1) / sizeBlock;
 
     printline("Check\n")
-
 
     DeviceKernel( numBlocks, sizeBlock, N, d_c, d_a, d_b);  // vector addition on DEVICE
 

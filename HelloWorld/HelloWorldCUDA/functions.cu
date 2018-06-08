@@ -5,11 +5,8 @@
 __global__
 void KernelAdd(int n, float * p_sum, float * x, float * y){
 
-  //int i = blockIdx.x * blockDim.x + threadIdx.x;
-
   for (int i = 0; i < n; i++)
     p_sum[i] = x[i] + y[i];
-
 }
 
 void DeviceKernel(int numBlocks, int sizeBlock, int n, float * p_sum, float * x, float * y){
