@@ -21,7 +21,7 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 }
 
 // outputs debugging macro
-#define printline(ans) { fprintf(outfile, ans); fprintf(outfile, "\nfile: %s line: %d", __FILE__, __LINE__);}
+#define printline(ans) { fprintf(outfile, "file: %s line: %d\n - ", __FILE__, __LINE__); fprintf(outfile, ans); }
 
 // argc - argument count is the number of parameters passed plus one more
 //        parameter which is the name of the program that was executed. This is
@@ -34,14 +34,13 @@ int main(int argc, char * argv[]){
     FILE * outfile;
     outfile = fopen("debug.txt", "w");
     if (outfile == NULL){
-      printf("\n\n\n\n.....there is an error opening debug file....\n\n\n\n");
+      printf(".....there is an error opening debug file....\n");
       return 0;
     }
 
-    printline("Hello! Welcome to the HelloWorld equivalent of CUDA.")
+    printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
     int N = 1 << 20;  // approximately a million elements
-    printline(" WASSUP ")
     // generate vectors for addition on HOST
     float * c = new float[N]; // allocate memory of million floats on HOST
     if ( c == NULL ) exit (1);  // error check
@@ -50,12 +49,14 @@ int main(int argc, char * argv[]){
     float * b = new float[N]; // allocate memory on HOST
     if ( b == NULL ) exit (1);  // error check
 
+    printline("Check\n")
     // initialize a and b on HOST
     for (int i = 0; i < N; i++){
       a[i] = 1.0f;
       b[i] = 2.0f;
       c[i] = 0.0f;
     }
+    printline("Check\n")
 
     // ~~~~~~~~~~~~~~~ vector addition - DEVICE~~~~~~~~~~~~~~~
 
@@ -66,6 +67,8 @@ int main(int argc, char * argv[]){
     gpuErrchk(cudaMalloc(&d_a, N));
     float * d_b;
     gpuErrchk(cudaMalloc(&d_b, N));
+
+    printline("Check\n")
 
     printf("Number of bytes allocated per vector: %d bytes\n", N);
 
