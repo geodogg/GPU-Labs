@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 
 // cuda library
 #include <cuda_runtime.h>
-#include <helper_functions.h>
 #include <helper_cuda.h>
 #include <cooperative_groups.h>
+#include <functions.cuh>
 
 using namespace std;
 
@@ -67,9 +68,9 @@ int main(int argc, char * argv[]){
 
     int sizeBlock = 1;
     int numBlocks = 1;
-//    scanf("Please enter numebr of threads per block:%i\n", sizeBlock);
-//    numBlocks = (N + sizeBlock - 1) / sizeBlock;
-    KernelAdd<<<numBlocks, sizeBlock>>> (N, d_c, d_a, d_b);  // vector addition on DEVICE
+    scanf("Please enter number of threads per block:%i\n", sizeBlock);
+    numBlocks = (N + sizeBlock - 1) / sizeBlock;
+    DeviceKernel( numBlocks, sizeBlock, N, d_c, d_a, d_b, "KernelAdd");  // vector addition on DEVICE
 
     // Wait for GPU to finish before accessing on host
     cudaDeviceSynchronize();
