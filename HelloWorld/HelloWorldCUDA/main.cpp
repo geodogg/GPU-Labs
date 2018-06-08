@@ -24,6 +24,7 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 #define printline(ans) { if (ans == true)
     fprintf(outfile, ans);
     fprintf(outfile, "\nfile: %s line: %s", __FILE__, __LINE__)}
+
 // argc - argument count is the number of parameters passed plus one more
 //        parameter which is the name of the program that was executed. This is
 //        held in the argv[0].
@@ -31,7 +32,10 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 int main(int argc, char * argv[]){
     // debugging outfile
     FILE * outfile;
-    outfile = fopen("./debug.txt", "w");
+    outfile = fopen("./debug.txt", 'w');
+    if (!outfile.good()){
+      printf("\n\n\n\n.....there is an error....\n\n\n\n");
+    }
 
     printline("Running program: %s\n", argv[0]);
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.");
@@ -63,7 +67,7 @@ int main(int argc, char * argv[]){
     float * d_b;
     gpuErrchk(cudaMalloc(&d_b, N));
 
-    printf ("Number of bytes allocated per vector: %d bytes\n", N);
+    printf("Number of bytes allocated per vector: %d bytes\n", N);
 
     printf("~~~~~~Vector addition on DEVICE~~~~~~\n");
 
@@ -103,5 +107,6 @@ int main(int argc, char * argv[]){
     cudaFree(d_a);
     cudaFree(d_b);
 
+    fclose(outfile);
     return 0;
 }
