@@ -21,9 +21,9 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 }
 
 // outputs debugging macro
-#define printline(ans) { if (ans == true)
+#define printline(ans) {
     fprintf(outfile, ans);
-    fprintf(outfile, "\nfile: %s line: %s", __FILE__, __LINE__)}
+    fprintf(outfile, "\nfile: %s line: %d", __FILE__, __LINE__)}
 
 // argc - argument count is the number of parameters passed plus one more
 //        parameter which is the name of the program that was executed. This is
