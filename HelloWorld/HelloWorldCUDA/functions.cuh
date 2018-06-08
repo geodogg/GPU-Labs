@@ -1,10 +1,10 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef FUNCTIONS_CUH
+#define FUNCTIONS_CUH
 
-#include <ctime>
-
-// vector addition on HOST
-void add(int n, float * p_sum, float * x, float * y);
+// cuda library
+#include <cuda_runtime.h>
+#include <helper_cuda.h>
+#include <cooperative_groups.h>
 
 // GPU error checking macro
 #define gpuErrchk(ans){ gpuAssert((ans), __FILE__, __LINE__); }

@@ -1,9 +1,12 @@
-#include "functions.h"
+#include "functions.cuh"
 
-void add(int n, float * p_sum, float * x, float * y){
+__global__
+void KernelAdd(int n, float * p_sum, float * x, float * y){
 
-  for (int i = 0; i < n; i++){
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+  if (i < n){
     p_sum[i] = x[i] + y[i];
-  }
+
   return;
-}.
+}
