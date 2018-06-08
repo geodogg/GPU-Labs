@@ -1,14 +1,23 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <ctime>
-#include "functions.cuh"
 
 // cuda library
 #include <cuda_runtime.h>
+#include <helper_functions.h>
 #include <helper_cuda.h>
 #include <cooperative_groups.h>
 
 using namespace std;
+
+// GPU error checking macro
+#define gpuErrchk(ans){ gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort = true){
+  if (code != cudaSuccess){
+    fprintf(stderr, "gpuAssert: %s %s %d\n", cudaGetErrorString(code), file, line);
+    exit(code);
+  }
+}
 
 // argc - argument count is the number of parameters passed plus one more
 //        parameter which is the name of the program that was executed. This is

@@ -247,7 +247,7 @@ run: hello
 	$(EXEC) ./hello
 
 clean:
-	rm hello *.o
+	rm -f hello *.o
 	rm -rf ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)/hello
 
 clobber: clean
