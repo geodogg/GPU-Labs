@@ -20,6 +20,8 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
   }
 }
 
+// outputs debugging macro
+#define printline() { fprintf(outfile, "file: %s line: %s", __FILE__, __LINE__);}
 // argc - argument count is the number of parameters passed plus one more
 //        parameter which is the name of the program that was executed. This is
 //        held in the argv[0].
@@ -27,6 +29,11 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 int main(int argc, char * argv[]){
     printf("Running program: %s\n", argv[0]);
     printf("Hello! Welcome to the HelloWorld equivalent of CUDA.\n");
+
+    // debugging outfile
+    FILE * outfile;
+    outfile = fopen("debug.txt", "w");
+
 
     int N = 1 << 20;  // approximately a million elements
 
