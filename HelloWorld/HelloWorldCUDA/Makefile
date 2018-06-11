@@ -232,12 +232,9 @@ endif
 
 # Target rules hello
 
-all: build device
+all: build
 
 build: hello
-
-device: deviceQuery
-	$(CUDA_EXT_PATH)
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -259,6 +256,7 @@ hello: main.o functions.o
 
 run: build
 	$(EXEC) ./hello
+	$(EXEC) $(CUDA_EXT_PATH) ./deviceQuery
 
 clean:
 	rm -f hello *.o debug.txt *.out
