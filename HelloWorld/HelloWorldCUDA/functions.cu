@@ -11,6 +11,6 @@ void KernelAdd(int n, float * p_sum, float * x, float * y){
 
 void DeviceKernel(int numBlocks, int sizeBlock, int n, float * p_sum, float * x, float * y){
 
-    KernelAdd <<<numBlocks, sizeBlock>>> (n, p_sum, x, y);  // vector addition on DEVICE
+    KernelAdd <<<numBlocks, sizeBlock>>> (n, p_sum, x, y);  // vector addition on DEVICE simple
 
 }

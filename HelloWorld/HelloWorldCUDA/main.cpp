@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 
-// cuda library
+// cuda library inlcludes
 #include <cuda_runtime.h>
 #include <helper_cuda.h>
 #include <cooperative_groups.h>
