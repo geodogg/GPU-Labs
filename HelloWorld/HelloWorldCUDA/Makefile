@@ -236,7 +236,8 @@ all: build device
 
 build: hello
 
-device: $(CUDA_EXT_PATH) ./deviceQuery
+device:
+	$(CUDA_EXT_PATH) ./deviceQuery
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
