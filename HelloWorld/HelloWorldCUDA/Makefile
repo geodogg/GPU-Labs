@@ -232,7 +232,7 @@ endif
 
 # Target rules hello
 
-all: build
+all: build device
 
 build: hello
 
