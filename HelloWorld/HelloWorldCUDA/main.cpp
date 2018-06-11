@@ -40,7 +40,7 @@ int main(int argc, char * argv[]){
 
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
-    int N = 1 << 10;  // approximately a million elements
+    int N = 1 << 16;  // approximately a million elements
     // generate vectors for addition on HOST
     float * c = new float[N]; // allocate memory of million floats on HOST
     if ( c == NULL ) exit (1);  // error check
