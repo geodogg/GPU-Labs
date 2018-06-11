@@ -40,7 +40,7 @@ int main(int argc, char * argv[]){
 
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
-    int N = 1 << 20;  // approximately a million elements
+    int N = 1 << 16;  // approximately a million elements
     // generate vectors for addition on HOST
     float * c = new float[N]; // allocate memory of million floats on HOST
     if ( c == NULL ) exit (1);  // error check
@@ -85,7 +85,7 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
-    int sizeBlock = 1;
+    int sizeBlock = 256;
     int numBlocks = 1;
 //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
 //  numBlocks = (N + sizeBlock - 1) / sizeBlock;
