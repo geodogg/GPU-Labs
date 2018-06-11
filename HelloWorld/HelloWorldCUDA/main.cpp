@@ -40,7 +40,7 @@ int main(int argc, char * argv[]){
 
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
-    int N = 1 << 18;  // approximately a million elements
+    int N = 1 << 20;  // approximately a million elements
     // generate vectors for addition on HOST
     float * c = new float[N]; // allocate memory of million floats on HOST
     if ( c == NULL ) exit (1);  // error check
@@ -111,7 +111,7 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
-    printf("Vector addition on the HOST\nElapsed time: %f (sec)\n", elapsed_time);
+    printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
 
     // free memory on HOST
     delete [] c;
