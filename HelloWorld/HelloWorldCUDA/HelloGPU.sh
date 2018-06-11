@@ -4,4 +4,4 @@
 #SBATCH --mem=16GB               # memory per node
 #SBATCH --time=0-00:1            # time (DD-HH:MM) haha
 ./hello
--I/cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Compiler/intel2016.4/cuda/9.0.176/extras/demo_suite ./deviceQuery
+./deviceQuery
