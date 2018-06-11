@@ -4,4 +4,3 @@
 #SBATCH --mem=16GB               # memory per node
 #SBATCH --time=0-00:1            # time (DD-HH:MM) haha
 ./hello
-./deviceQuery
