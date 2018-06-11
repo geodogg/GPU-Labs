@@ -3,6 +3,7 @@ CUDA_PATH       ?= "/cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Co
 CUDA_INC_PATH   ?= $(CUDA_PATH)/include
 CUDA_BIN_PATH   ?= $(CUDA_PATH)/bin
 CUDA_LIB_PATH   ?= $(CUDA_PATH)/lib64
+CUDA_EXT_PATH   ?= $(CUDA_PATH)/extras/demo_suite
 
 
 ##############################
@@ -234,6 +235,9 @@ endif
 all: build
 
 build: hello
+
+device:
+	$(CUDA_EXT_PATH) ./deviceQuery
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)

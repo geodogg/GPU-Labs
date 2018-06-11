@@ -70,7 +70,7 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
-    printf("Number of bytes allocated per vector: %d bytes\n", N);
+    printf("Number of floats allocated per vector: %d bytes\n", N);
 
     printf("~~~~~~Vector addition on DEVICE~~~~~~\n");
 
