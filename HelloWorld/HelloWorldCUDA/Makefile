@@ -5,7 +5,6 @@ CUDA_BIN_PATH   ?= $(CUDA_PATH)/bin
 CUDA_LIB_PATH   ?= $(CUDA_PATH)/lib64
 CUDA_EXT_PATH   ?= $(CUDA_PATH)/extras/demo_suite
 
-
 ##############################
 # start deprecated interface #
 ##############################

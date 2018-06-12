@@ -97,7 +97,9 @@ int main(int argc, char * argv[]){
     printline("Check\n")
 
     // Wait for GPU to finish before accessing on host
-    cudaDeviceSynchronize();
+//    cudaDeviceSynchronize();
+    // waiting for Device to synchronize on cedar or busy remote servers will cause
+    // program to take forever.
 
     printline("Check\n")
 
