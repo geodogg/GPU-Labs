@@ -85,10 +85,9 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
-    int sizeBlock = 256;
-    int numBlocks;
+    int sizeBlock = 1;
+    int numBlocks = 1;
 //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
-    numBlocks = (N + sizeBlock - 1) / sizeBlock;
 
     printline("Check\n")
 
