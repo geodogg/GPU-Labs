@@ -23,8 +23,7 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 #define printline(ans) { fprintf(outfile, "file: %s line: %d\n - ", __FILE__, __LINE__); fprintf(outfile, ans); }
 
 // initialize unified memory
-int N = 1 << 10;  // 1024 elements
-__device__ __managed__ float c[N];
+__device__ __managed__ float c[ (int) 1 << 10];
 
 // addition kernel
 __global__
@@ -51,6 +50,8 @@ int main(int argc, char * argv[]){
 
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
+    int N = 1 << 10;  // 1024 elements
+
     float a = 100000.0;
     float b = 1000000.0;
 
@@ -70,7 +71,6 @@ int main(int argc, char * argv[]){
 //    cudaDeviceSynchronize();
     // waiting for Device to synchronize on cedar or busy remote servers will cause
     // program to take forever.
-    int i = 0;
     for(int i = 0; i < N; i++)
       fprintf(outfile, "c[%d] = %f", i, c[i]);
 
