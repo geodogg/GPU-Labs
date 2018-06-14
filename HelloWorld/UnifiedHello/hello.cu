@@ -2,7 +2,6 @@
 #include <cassert>  // useful for debugging
 #include <cstdlib>
 #include <ctime>
-#include <array>
 
 // cuda library inlcludes
 #include <cuda_runtime.h>
@@ -52,10 +51,10 @@ int main(int argc, char * argv[]){
 
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
-    float a = 1.0;
-    float b = 2.0;
+    float a = 100000.0;
+    float b = 1000000.0;
 
-    int sizeBlock = 256;
+    int sizeBlock = 1024;
     int numBlocks = 1;
 //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
 
@@ -72,8 +71,8 @@ int main(int argc, char * argv[]){
     // waiting for Device to synchronize on cedar or busy remote servers will cause
     // program to take forever.
     int i = 0;
-    for(auto iter = c.begin(); iter != c.end(); iter++, i++)
-      fprintf(outfile, "c[%d] = %f", i, (*iter);
+    for(int i = 0; i < N; i++)
+      fprintf(outfile, "c[%d] = %f", i, c[i]);
 
     printline("Check\n")
 
