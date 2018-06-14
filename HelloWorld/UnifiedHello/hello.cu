@@ -7,7 +7,6 @@
 #include <cuda_runtime.h>
 #include <helper_cuda.h>
 #include <cooperative_groups.h>
-#include "functions.cuh"
 
 using namespace std;
 
