@@ -70,9 +70,9 @@ int main(int argc, char * argv[]){
 //    cudaDeviceSynchronize();
     // waiting for Device to synchronize on cedar or busy remote servers will cause
     // program to take forever.
-
-    for(auto iter = c.begin(); iter != c.end(); iter++)
-      fprintf(outfile, "c[%d] = %f", i, c[i]);
+    int i = 0;
+    for(auto iter = c.begin(); iter != c.end(); iter++, i++)
+      fprintf(outfile, "c[%d] = %f", i, (*iter);
 
     printline("Check\n")
 
