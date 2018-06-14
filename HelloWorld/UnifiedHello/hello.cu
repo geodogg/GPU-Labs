@@ -78,8 +78,8 @@ int main(int argc, char * argv[]){
 //
 //     clock_t toc = clock() - tic;
 //     float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;
-
-    printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
+//
+//     printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
 
     fclose(outfile);
     return 0;
