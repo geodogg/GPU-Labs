@@ -50,36 +50,36 @@ int main(int argc, char * argv[]){
 
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
-//     int N = 1 << 10;  // 1024 elements
-//
-//     float a = 100000.0;
-//     float b = 1000000.0;
-//
-//     int sizeBlock = 1024;
-//     int numBlocks = 1;
-// //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
-//
-//     clock_t tic = clock();  // start clocking
-//
-//     printline("Check\n")
-//
-//     KernelAdd<<< numBlocks, sizeBlock >>> (N, a, b);
-//
-//     printline("Check\n")
-//
-//     // Wait for GPU to finish before accessing on host
-// //    cudaDeviceSynchronize();
-//     // waiting for Device to synchronize on cedar or busy remote servers will cause
-//     // program to take forever.
-//     for(int i = 0; i < N; i++)
-//       fprintf(outfile, "c[%d] = %f", i, c[i]);
-//
-//     printline("Check\n")
-//
-//     clock_t toc = clock() - tic;
-//     float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;
-//
-//     printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
+    int N = 1 << 10;  // 1024 elements
+
+    float a = 100000.0;
+    float b = 1000000.0;
+
+    int sizeBlock = 1024;
+    int numBlocks = 1;
+//  scanf("Please enter number of threads per block:%i\n", sizeBlock);
+
+    clock_t tic = clock();  // start clocking
+
+    printline("Check\n")
+
+    KernelAdd<<< numBlocks, sizeBlock >>> (N, a, b);
+
+    printline("Check\n")
+
+    // Wait for GPU to finish before accessing on host
+//    cudaDeviceSynchronize();
+    // waiting for Device to synchronize on cedar or busy remote servers will cause
+    // program to take forever.
+    for(int i = 0; i < N; i++)
+      fprintf(outfile, "c[%d] = %f", i, c[i]);
+
+    printline("Check\n")
+
+    clock_t toc = clock() - tic;
+    float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;
+
+    printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
 
     fclose(outfile);
     return 0;
