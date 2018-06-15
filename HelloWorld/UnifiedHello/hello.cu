@@ -31,7 +31,7 @@ void KernelAdd(int N, float a, float b){
 
   int index = blockIdx.x * blockDim.x + threadIdx.x;
   int stride = blockDim.x * gridDim.x;
-  for (int i = index; i < n; i += stride)
+  for (int i = index; i < N; i += stride)
       c[i] = a + b + i;
 
   // int i = blockIdx.x * blockDim.x + threadIdx.x;
