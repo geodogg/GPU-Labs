@@ -29,14 +29,14 @@ __device__ __managed__ float c[ (int) 1 << 20];
 __global__
 void KernelAdd(int N, float a, float b){
 
-  int index = blockIdx.x * blockDim.x + threadIdx.x;
-  int stride = blockDim.x * gridDim.x;
-  for (int i = index; i < N; i += stride)
-      c[i] = a + b + i;
+  // int index = blockIdx.x * blockDim.x + threadIdx.x;
+  // int stride = blockDim.x * gridDim.x;
+  // for (int i = index; i < N; i += stride)
+  //     c[i] = a + b + i;
 
-  // int i = blockIdx.x * blockDim.x + threadIdx.x;
-  // if ( i < N )
-  //   c[i] = a + b + i;
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  if ( i < N )
+    c[i] = a + b + i;
 
 }
 
@@ -67,7 +67,7 @@ int main(int argc, char * argv[]){
     printline("Check\n")
 
     KernelAdd<<< numBlocks, sizeBlock >>> (N, a, b);
-//    cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
 
     clock_t toc = clock() - tic;
     float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;   // finish clocking
