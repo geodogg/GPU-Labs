@@ -60,7 +60,7 @@ int main(int argc, char * argv[]){
     float b = 0.01;
 
     int sizeBlock = 256;
-    int numBlocks = (int)((N + blockSize - 1) / blockSize);
+    int numBlocks = (int)((N + sizeBlock - 1) / sizeBlock);
 //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
 
     clock_t tic = clock();  // start clocking
