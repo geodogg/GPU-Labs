@@ -71,13 +71,14 @@ int main(int argc, char * argv[]){
 //    cudaDeviceSynchronize();
     // waiting for Device to synchronize on cedar or busy remote servers will cause
     // program to take forever.
-    for(int i = 0; i < N; i++)
-      fprintf(outfile, "c[%d] = %f", i, c[i]);
 
     printline("Check\n")
 
     clock_t toc = clock() - tic;
     float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;
+
+    for(int i = 0; i < N; i++)
+      fprintf(outfile, "c[%d] = %f\n", i, c[i]);
 
     printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
 
