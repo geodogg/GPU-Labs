@@ -23,18 +23,18 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 #define printline(ans) { fprintf(outfile, "file: %s line: %d\n - ", __FILE__, __LINE__); fprintf(outfile, ans); }
 
 // initialize unified memory
-__device__ __managed__ float c[ (int) 1 << 10];
+__device__ __managed__ float c[ (int) 1 << 20];
 
 // addition kernel
 __global__
 void KernelAdd(int N, float a, float b){
 
-  // int i = blockIdx.x * blockDim.x + threadIdx.x;
-  // if ( i < N )
-  //   c[i] = a + b + i;
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  if ( i < N )
+    c[i] = a + b + i;
 
   // using single block
-  c[threadIdx.x] = a + b + threadIdx.x;
+  // c[threadIdx.x] = a + b + threadIdx.x;
 }
 
 int main(int argc, char * argv[]){
@@ -52,8 +52,8 @@ int main(int argc, char * argv[]){
 
     int N = 1 << 10;  // 1024 elements
 
-    float a = 100000.0;
-    float b = 1000000.0;
+    float a = 0.10;
+    float b = 0.01;
 
     int sizeBlock = 1024;
     int numBlocks = 1;
