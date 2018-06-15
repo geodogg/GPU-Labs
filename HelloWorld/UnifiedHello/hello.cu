@@ -29,12 +29,12 @@ __device__ __managed__ float c[ (int) 1 << 10];
 __global__
 void KernelAdd(int N, float a, float b){
 
-  int i = blockIdx.x * blockDim.x + threadIdx.x;
-  if ( i < N )
-    c[i] = a + b + i;
+  // int i = blockIdx.x * blockDim.x + threadIdx.x;
+  // if ( i < N )
+  //   c[i] = a + b + i;
 
   // using single block
-//  c[threadIdx.x] = a + b + threadIdx.x;
+  c[threadIdx.x] = a + b + threadIdx.x;
 }
 
 int main(int argc, char * argv[]){
