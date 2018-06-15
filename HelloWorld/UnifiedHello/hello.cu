@@ -29,14 +29,14 @@ __device__ __managed__ float c[ (int) 1 << 20];
 __global__
 void KernelAdd(int N, float a, float b){
 
-  // int index = blockIdx.x * blockDim.x + threadIdx.x;
-  // int stride = blockDim.x * gridDim.x;
-  // for (int i = index; i < N; i += stride)
-  //     c[i] = a + b + i;
+  int index = blockIdx.x * blockDim.x + threadIdx.x;
+  int stride = blockDim.x * gridDim.x;
+  for (int i = index; i < N; i += stride)
+      c[i] = a + b + i;
 
-  int i = blockIdx.x * blockDim.x + threadIdx.x;
-  if ( i < N )
-    c[i] = a + b + i;
+  // int i = blockIdx.x * blockDim.x + threadIdx.x;
+  // if ( i < N )
+  //   c[i] = a + b + i;
 
 }
 
@@ -59,7 +59,7 @@ int main(int argc, char * argv[]){
     float b = 0.01;
 
     int sizeBlock = 1024;
-    int numBlocks = 1024;
+    int numBlocks = 1;
 //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
 
     clock_t tic = clock();  // start clocking
