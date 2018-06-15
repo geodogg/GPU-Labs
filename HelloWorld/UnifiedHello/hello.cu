@@ -67,6 +67,7 @@ int main(int argc, char * argv[]){
     printline("Check\n")
 
     KernelAdd<<< numBlocks, sizeBlock >>> (N, a, b);
+    cudaDeviceSynchronize();
 
     printline("Check\n")
 
