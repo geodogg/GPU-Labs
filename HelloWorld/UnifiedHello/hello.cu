@@ -29,17 +29,15 @@ __device__ __managed__ float c[ (int) 1 << 20];
 __global__
 void KernelAdd(int N, float a, float b){
 
-  // int index = blockIdx.x * blockDim.x + threadIdx.x;
-  // int stride = blockDim.x * gridDim.x;
-  // for (int i = index; i < N; i += stride)
-  //     c[i] = a + b + i;
+  int index = blockIdx.x * blockDim.x + threadIdx.x;
+  int stride = blockDim.x * gridDim.x;
+  for (int i = index; i < N; i += stride)
+      c[i] = a + b + i;
 
-  int i = blockIdx.x * blockDim.x + threadIdx.x;
-  if ( i < N )
-    c[i] = a + b + i;
+  // int i = blockIdx.x * blockDim.x + threadIdx.x;
+  // if ( i < N )
+  //   c[i] = a + b + i;
 
-  // using single block
-  // c[threadIdx.x] = a + b + threadIdx.x;
 }
 
 int main(int argc, char * argv[]){
@@ -78,10 +76,6 @@ int main(int argc, char * argv[]){
 
     printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
 
-    // Wait for GPU to finish before accessing on host
-//    cudaDeviceSynchronize();
-    // waiting for Device to synchronize on cedar or busy remote servers will cause
-    // program to take forever.
 
     printline("Check\n")
 
