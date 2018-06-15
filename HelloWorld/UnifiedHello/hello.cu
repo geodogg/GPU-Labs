@@ -56,7 +56,7 @@ int main(int argc, char * argv[]){
     float b = 0.01;
 
     int sizeBlock = 1024;
-    int numBlocks = 1;
+    int numBlocks = 1024;
 //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
 
     clock_t tic = clock();  // start clocking
@@ -67,7 +67,6 @@ int main(int argc, char * argv[]){
     printline("Check\n")
 
     KernelAdd<<< numBlocks, sizeBlock >>> (N, a, b);
-    cudaDeviceSynchronize();
 
     printline("Check\n")
 
