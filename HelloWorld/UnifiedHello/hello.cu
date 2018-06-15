@@ -2,7 +2,6 @@
 #include <cassert>  // useful for debugging
 #include <cstdlib>
 #include <ctime>
-#include <cmath>
 
 // cuda library inlcludes
 #include <cuda_runtime.h>
