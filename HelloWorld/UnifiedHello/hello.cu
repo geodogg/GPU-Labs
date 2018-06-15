@@ -50,7 +50,7 @@ int main(int argc, char * argv[]){
 
     printline("Hello! Welcome to the HelloWorld equivalent of CUDA.\n")
 
-    int N = 1 << 10;  // 1024 elements
+    int N = 1 << 20;  // 1024 elements
 
     float a = 0.10;
     float b = 0.01;
