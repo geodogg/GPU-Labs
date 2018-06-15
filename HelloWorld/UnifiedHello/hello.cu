@@ -2,6 +2,7 @@
 #include <cassert>  // useful for debugging
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 
 // cuda library inlcludes
 #include <cuda_runtime.h>
@@ -58,8 +59,8 @@ int main(int argc, char * argv[]){
     float a = 0.10;
     float b = 0.01;
 
-    int sizeBlock = 1024;
-    int numBlocks = 1;
+    int sizeBlock = 256;
+    int numBlocks = (int)((N + blockSize - 1) / blockSize);
 //  scanf("Please enter number of threads per block:%i\n", sizeBlock);
 
     clock_t tic = clock();  // start clocking
