@@ -61,11 +61,16 @@ int main(int argc, char * argv[]){
 
     clock_t tic = clock();  // start clocking
 
+    clock_t toc = clock() - tic;
+    float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;
+
     printline("Check\n")
 
     KernelAdd<<< numBlocks, sizeBlock >>> (N, a, b);
 
     printline("Check\n")
+
+    printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
 
     // Wait for GPU to finish before accessing on host
 //    cudaDeviceSynchronize();
@@ -74,13 +79,8 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
-    clock_t toc = clock() - tic;
-    float elapsed_time = ((float)toc) / CLOCKS_PER_SEC;
-
     for(int i = 0; i < N; i++)
       fprintf(outfile, "c[%d] = %f\n", i, c[i]);
-
-    printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
 
     fclose(outfile);
     return 0;
