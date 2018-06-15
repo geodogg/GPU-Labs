@@ -23,7 +23,7 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 #define printline(ans) { fprintf(outfile, "file: %s line: %d\n - ", __FILE__, __LINE__); fprintf(outfile, ans); }
 
 // initialize unified memory
-__device__ __managed__ float c[ (int) 1 << 20];
+__device__ __managed__ double c[ (int) 1 << 20];
 
 // addition kernel
 __global__
@@ -52,8 +52,8 @@ int main(int argc, char * argv[]){
 
     int N = 1 << 20;  // 1024 elements
 
-    float a = 0.10;
-    float b = 0.01;
+    double a = 0.10;
+    double b = 0.01;
 
     int sizeBlock = 1024;
     int numBlocks = 1024;
