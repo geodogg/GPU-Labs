@@ -108,8 +108,7 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
     p = 0;
-    i = 0;
-    for(; i < N; p++, i+=(1<<p))
+    for(int i = 0; i < N; p++, i+=(1<<p))
       fprintf(outfile, "c[%d] = %f\n", i, c[i]);
 
     fclose(outfile);
