@@ -6,6 +6,7 @@
 // cuda library inlcludes
 #include <cuda_runtime.h>
 #include <helper_cuda.h>
+#include <helper_functions.h>  // helper for shared that are common to CUDA Samples
 #include <cooperative_groups.h>
 
 using namespace std;
@@ -40,6 +41,21 @@ void KernelAdd(int N, float a, float b){
 
 }
 
+// subtraction kernel
+__global__
+void KernelSub(int N, float a, float b){
+
+  int index = blockIdx.x * blockDim.x + threadIdx.x;
+  int stride = blockDim.x * gridDim.x;
+  for (int i = index; i < N; i += stride)
+      c[i] = a - b - i;
+
+  // int i = blockIdx.x * blockDim.x + threadIdx.x;
+  // if ( i < N )
+  //   c[i] = a + b + i;
+
+}
+
 int main(int argc, char * argv[]){
     printf("Running program: %s\n", argv[0]);
 
@@ -66,6 +82,8 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
+    cudaSetDevice(0);
+
     KernelAdd<<< numBlocks, sizeBlock >>> (N, a, b);
     cudaDeviceSynchronize();
 
@@ -74,12 +92,23 @@ int main(int argc, char * argv[]){
 
     printline("Check\n")
 
-    printf("Vector addition on the DEVICE\nElapsed time: %f (sec)\n", elapsed_time);
+    printf("Vector addition on the DEVICE 0\nElapsed time: %f (sec)\n", elapsed_time);
 
 
     printline("Check\n")
     int p = 0;
     for(int i = 0; i < N; p++, i+=(1<<p))
+      fprintf(outfile, "c[%d] = %f\n", i, c[i]);
+
+
+    cudaSetDevice(1);
+    KernelSub<<< numBlocks, sizeBlock >>> (N, a, b);
+
+    printf("Vector subtration on the DEVICE 1\n");
+
+    printline("Check\n")
+    p = 0;
+    for(i = 0; i < N; p++, i+=(1<<p))
       fprintf(outfile, "c[%d] = %f\n", i, c[i]);
 
     fclose(outfile);
