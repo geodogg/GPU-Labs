@@ -27,7 +27,7 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 #define N (1 << 20)
 #define sizeBlock (1024)
 #define numBlocks (1024)
-#define a(0.10f)
+#define a (0.10f)
 #define b (0.01f)
 
 // initialize unified memory
