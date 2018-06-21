@@ -27,6 +27,8 @@ inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort 
 #define N (1 << 20)
 #define sizeBlock (1024)
 #define numBlocks (1024)
+#define a(0.10f)
+#define b (0.01f)
 
 // initialize unified memory
 __device__ __managed__ float c[ (int) 1 << 20];
@@ -34,9 +36,6 @@ __device__ __managed__ float c[ (int) 1 << 20];
 // addition kernel
 __global__
 void KernelAdd(){
-
-  __shared__ float a = 0.10;
-  __shared__ float b = 0.01;
 
   int index = blockIdx.x * blockDim.x + threadIdx.x;
   int stride = blockDim.x * gridDim.x;
@@ -53,8 +52,6 @@ void KernelAdd(){
 __global__
 void KernelSub(){
 
-  __shared__ float a = 0.10;
-  __shared__ float b = 0.01;
   int index = blockIdx.x * blockDim.x + threadIdx.x;
   int stride = blockDim.x * gridDim.x;
   for (int i = index; i < N; i += stride)
@@ -111,7 +108,7 @@ int main(int argc, char * argv[]){
     tic = clock();  // start clocking
 
     cudaDeviceSynchronize();
-    KernelSub<<< numBlocks, sizeBlock >>> (N, a, b);
+    KernelSub<<< numBlocks, sizeBlock >>> ();
 
     toc = clock() - tic;
     elapsed_time = ((float)toc) / CLOCKS_PER_SEC;   // finish clocking
