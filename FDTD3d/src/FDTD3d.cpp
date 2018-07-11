@@ -174,7 +174,7 @@ bool runTest(int argc, const char **argv)
     ////////////////////////////////////////////////////////////////////////////
 
     int num_devices = 0;
-    checkCudaErrors(cudaGetDeviceCount(&num_devices));
+    gpuErrchk(cudaGetDeviceCount(&num_devices));
 
     printf("Number of devices %d\n",num_devices);
 
@@ -189,10 +189,10 @@ bool runTest(int argc, const char **argv)
     {
         arr_device[i].device = i;
         arr_device[i].num_devices = num_devices;
-        checkCudaErrors(cudaSetDevice(arr_device[i].device));
-        checkCudaErrors(cudaStreamCreate(&(streams[i])));
-        checkCudaErrors(cudaEventCreate(&(events[i])));
-        checkCudaErrors(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
+        gpuErrchk(cudaSetDevice(arr_device[i].device));
+        gpuErrchk(cudaStreamCreate(&(streams[i])));
+        gpuErrchk(cudaEventCreate(&(events[i])));
+        gpuErrchk(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
 
         // Allocate intermediate memory for MC integrator
         // and initialize RNG state
