@@ -26,6 +26,15 @@
 #define CLAMP(a, min, max) ( MIN(max, MAX(a, min)) )
 #endif
 
+// GPU ERROR CHECKING MACROS
+#define gpuErrchk(ans){ gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char * file, int line, bool abort = true){
+  if (code != cudaSuccess){
+    fprintf(stderr, "gpuAssert: %s %s %d\n", cudaGetErrorString(code), file, line);
+    exit(code);
+  }
+}
+
 //// Name of the log file
 //const char *printfFile = "FDTD3d.txt";
 
