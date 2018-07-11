@@ -204,7 +204,7 @@ bool runTest(int argc, const char **argv)
     cudaStream_t *streams = (cudaStream_t *) malloc(num__devices * sizeof(cudaStream_t));
     cudaEvent_t *events = (cudaEvent_t *) malloc(num__devices * sizeof(cudaEvent_t));
 
-    for (int i = 0; i < num_devices; i++)
+    for (int i = 0; i < num__devices; i++)
     {
         arr_device[i].device = i;
         arr_device[i].num_devices = num__devices;
