@@ -169,6 +169,40 @@ bool runTest(int argc, const char **argv)
         timesteps = CLAMP(getCmdLineArgumentInt(argc, argv, "timesteps"), k_timesteps_min, k_timesteps_max);
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~!!! UPDATED HERE !!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ////////////////////////////////////////////////////////////////////////////
+
+    int num_devices = 0;
+    checkCudaErrors(cudaGetDeviceCount(&num_devices));
+
+    printf("Number of devices %d\n",num_devices);
+
+    // Initialize an array of devices
+    DEVICES *arr_device = new DEVICES[num_devices];
+
+    // allocate and initialize an array of stream handles
+    cudaStream_t *streams = (cudaStream_t *) malloc(num_devices * sizeof(cudaStream_t));
+    cudaEvent_t *events = (cudaEvent_t *) malloc(num_devices * sizeof(cudaEvent_t));
+
+    for (int i = 0; i < num_devices; i++)
+    {
+        arr_device[i].device = i;
+        arr_device[i].num_devices = num_devices;
+        checkCudaErrors(cudaSetDevice(arr_device[i].device));
+        checkCudaErrors(cudaStreamCreate(&(streams[i])));
+        checkCudaErrors(cudaEventCreate(&(events[i])));
+        checkCudaErrors(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
+
+        // Allocate intermediate memory for MC integrator
+        // and initialize RNG state
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ////////////////////////////////////////////////////////////////////////////
+
     // Determine volume size
     outerDimx = dimx + 2 * radius;
     outerDimy = dimy + 2 * radius;
@@ -201,7 +235,7 @@ bool runTest(int argc, const char **argv)
 
     // Execute on the device
     printf("fdtdGPU...\n");
-    fdtdGPU(device_output, input, coeff, dimx, dimy, dimz, radius, timesteps, argc, argv);
+    fdtdGPU(arr_device, device_output, input, coeff, dimx, dimy, dimz, radius, timesteps, argc, argv);
     printf("fdtdGPU complete\n");
 
     // Compare the results
