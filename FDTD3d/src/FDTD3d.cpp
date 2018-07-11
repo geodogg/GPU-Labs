@@ -251,4 +251,8 @@ bool runTest(int argc, const char **argv)
     float tolerance = 0.0001f;
     printf("\nCompareData (tolerance %f)...\n", tolerance);
     return compareData(device_output, host_output, dimx, dimy, dimz, radius, tolerance);
+
+
+    delete[] arr_device;
+
 }
