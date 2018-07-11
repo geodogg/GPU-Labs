@@ -182,13 +182,13 @@ bool runTest(int argc, const char **argv)
     //~~~~~~~~~~~~~~~~~~~~~~~~~~!!! UPDATED HERE !!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ////////////////////////////////////////////////////////////////////////////
 
-    int num_devices = 0;
-    gpuErrchk(cudaGetDeviceCount(&num_devices));
+    int num__devices = 0;
+    gpuErrchk(cudaGetDeviceCount(&num__devices));
 
-    printf("Number of devices %d\n",num_devices);
+    printf("Number of devices %d\n",num__devices);
 
     // Initialize an array of devices
-    DEVICES *arr_device = new DEVICES[num_devices];
+    DEVICES *arr_device = new DEVICES[num__devices];
 
     // set gpu architecture abstrations
     for (int i = 0; i < arr_device[0].num_devices; i++){
@@ -201,13 +201,13 @@ bool runTest(int argc, const char **argv)
     }
 
     // allocate and initialize an array of stream handles
-    cudaStream_t *streams = (cudaStream_t *) malloc(num_devices * sizeof(cudaStream_t));
-    cudaEvent_t *events = (cudaEvent_t *) malloc(num_devices * sizeof(cudaEvent_t));
+    cudaStream_t *streams = (cudaStream_t *) malloc(num__devices * sizeof(cudaStream_t));
+    cudaEvent_t *events = (cudaEvent_t *) malloc(num__devices * sizeof(cudaEvent_t));
 
     for (int i = 0; i < num_devices; i++)
     {
         arr_device[i].device = i;
-        arr_device[i].num_devices = num_devices;
+        arr_device[i].num_devices = num__devices;
         gpuErrchk(cudaSetDevice(arr_device[i].device));
         gpuErrchk(cudaStreamCreate(&(streams[i])));
         gpuErrchk(cudaEventCreate(&(events[i])));

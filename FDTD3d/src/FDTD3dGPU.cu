@@ -89,16 +89,25 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     //
     // // Allocate memory buffers
 
-
     // allocate device data. split equally among GPUs
     for (int i = 0; i < arr_device[0].num_devices; i++){
         // set cuda device
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
-        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_out), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
+        checkCudaErrors(cudaMalloc(&(arr_device[i].d_out), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
         // set output device data
-        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_in), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
+        checkCudaErrors(cudaMalloc(&(arr_device[i].d_in), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
     }
+
+    // // allocate device data. split equally among GPUs
+    // for (int i = 0; i < arr_device[0].num_devices; i++){
+    //     // set cuda device
+    //     checkCudaErrors(cudaSetDevice(arr_device[i].device));
+    //     // set input device data
+    //     checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_out), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
+    //     // set output device data
+    //     checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_in), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
+    // }
 
     // Check for a command-line specified block size
     int userBlockSize;
