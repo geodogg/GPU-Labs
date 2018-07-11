@@ -43,7 +43,7 @@ bool getTargetDeviceGlobalMemSize(memsize_t *result, const int argc, const char 
     return true;
 }
 
-bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float *coeff, const int dimx, const int dimy, const int dimz, const int radius, const int timesteps, const int argc, const char **argv)
+bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const float *input, const float *coeff, const int dimx, const int dimy, const int dimz, const int radius, const int timesteps, const int argc, const char **argv)
 {
     const int         outerDimx  = dimx + 2 * radius;
     const int         outerDimy  = dimy + 2 * radius;
@@ -51,10 +51,10 @@ bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float
     const size_t      volumeSize = outerDimx * outerDimy * outerDimz;
     int               deviceCount  = 0;
     int               targetDevice = 0;
-    float            *bufferOut    = 0;
-    float            *bufferIn     = 0;
-    dim3              dimBlock;
-    dim3              dimGrid;
+    // float            *bufferOut    = 0;
+    // float            *bufferIn     = 0;
+    // dim3              dimBlock;
+    // dim3              dimGrid;
 
     // Ensure that the inner data starts on a 128B boundary
     const int padding = (128 / sizeof(float)) - radius;
@@ -79,17 +79,26 @@ bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float
         exit(EXIT_FAILURE);
     }
 
-    // Get the number of CUDA enabled GPU devices
-    checkCudaErrors(cudaGetDeviceCount(&deviceCount));
+    // // Get the number of CUDA enabled GPU devices
+    // checkCudaErrors(cudaGetDeviceCount(&deviceCount));
+    //
+    // // Select target device (device 0 by default)
+    // targetDevice = findCudaDevice(argc, (const char **)argv);
+    //
+    // checkCudaErrors(cudaSetDevice(targetDevice));
+    //
+    // // Allocate memory buffers
 
-    // Select target device (device 0 by default)
-    targetDevice = findCudaDevice(argc, (const char **)argv);
 
-    checkCudaErrors(cudaSetDevice(targetDevice));
-
-    // Allocate memory buffers
-    checkCudaErrors(cudaMalloc((void **)&bufferOut, paddedVolumeSize * sizeof(float)));
-    checkCudaErrors(cudaMalloc((void **)&bufferIn, paddedVolumeSize * sizeof(float)));
+    // allocate device data. split equally among GPUs
+    for (int i = 0; i < arr_device[0].num_devices; i++){
+        // set cuda device
+        checkCudaErrors(cudaSetDevice(arr_device[i].device));
+        // set input device data
+        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_out), paddedVolumeSize * sizeof(float) / arr_device[0].num_devices));
+        // set output device data
+        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_in), paddedVolumeSize * sizeof(float) / arr_device[0].num_devices));
+    }
 
     // Check for a command-line specified block size
     int userBlockSize;
@@ -108,38 +117,85 @@ bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float
         userBlockSize = k_blockSizeMax;
     }
 
-    // Check the device limit on the number of threads
-    struct cudaFuncAttributes funcAttrib;
-    checkCudaErrors(cudaFuncGetAttributes(&funcAttrib, FiniteDifferencesKernel));
+    // checkCudaErrors(cudaSetDevice(arr_device[i].device));
+    // // Check the device limit on the number of threads
+    // struct cudaFuncAttributes funcAttrib;
+    // checkCudaErrors(cudaFuncGetAttributes(&funcAttrib, FiniteDifferencesKernel));
+    //
+    // userBlockSize = MIN(userBlockSize, funcAttrib.maxThreadsPerBlock);
+    //
+    // // Set the block sizes
+    // dimBlock.x = k_blockDimX;
+    // // Visual Studio 2005 does not like std::min
+    // //    dimBlock.y = std::min<size_t>(userBlockSize / k_blockDimX, (size_t)k_blockDimMaxY);
+    // dimBlock.y = ((userBlockSize / k_blockDimX) < (size_t)k_blockDimMaxY) ? (userBlockSize / k_blockDimX) : (size_t)k_blockDimMaxY;
+    // dimGrid.x  = (unsigned int)ceil((float)dimx / dimBlock.x);
+    // dimGrid.y  = (unsigned int)ceil((float)dimy / dimBlock.y);
+    // printf(" set block size to %dx%d\n", dimBlock.x, dimBlock.y);
+    // printf(" set grid size to %dx%d\n", dimGrid.x, dimGrid.y);
+    //
+    // // Check the block size is valid
+    // if (dimBlock.x < RADIUS || dimBlock.y < RADIUS)
+    // {
+    //     printf("invalid block size, x (%d) and y (%d) must be >= radius (%d).\n", dimBlock.x, dimBlock.y, RADIUS);
+    //     exit(EXIT_FAILURE);
+    // }
 
-    userBlockSize = MIN(userBlockSize, funcAttrib.maxThreadsPerBlock);
+    // set gpu architecture abstrations
+    for (int i = 0; i < arr_device[0].num_devices; i++){
 
-    // Set the block size
-    dimBlock.x = k_blockDimX;
-    // Visual Studio 2005 does not like std::min
-    //    dimBlock.y = std::min<size_t>(userBlockSize / k_blockDimX, (size_t)k_blockDimMaxY);
-    dimBlock.y = ((userBlockSize / k_blockDimX) < (size_t)k_blockDimMaxY) ? (userBlockSize / k_blockDimX) : (size_t)k_blockDimMaxY;
-    dimGrid.x  = (unsigned int)ceil((float)dimx / dimBlock.x);
-    dimGrid.y  = (unsigned int)ceil((float)dimy / dimBlock.y);
-    printf(" set block size to %dx%d\n", dimBlock.x, dimBlock.y);
-    printf(" set grid size to %dx%d\n", dimGrid.x, dimGrid.y);
+        checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-    // Check the block size is valid
-    if (dimBlock.x < RADIUS || dimBlock.y < RADIUS)
-    {
-        printf("invalid block size, x (%d) and y (%d) must be >= radius (%d).\n", dimBlock.x, dimBlock.y, RADIUS);
-        exit(EXIT_FAILURE);
+        // Check the device limit on the number of threads
+        struct cudaFuncAttributes funcAttrib;
+        checkCudaErrors(cudaFuncGetAttributes(&funcAttrib, FiniteDifferencesKernel));
+
+        userBlockSize = MIN(userBlockSize, funcAttrib.maxThreadsPerBlock);
+
+        // Set the block sizes
+        arr_device[i].dimBlock.x = k_blockDimX;
+        arr_device[i].dimBlock.y = ((userBlockSize / k_blockDimX) < (size_t)k_blockDimMaxY) ? (userBlockSize / k_blockDimX) : (size_t)k_blockDimMaxY;
+        arr_device[i].dimGrid.x = (unsigned int)ceil((float)dimx / dimBlock.x);
+        arr_device[i].dimGrid.y = (unsigned int)ceil((float)dimy / dimBlock.y);
+        printf(" for device %d\n", arr_device[i].device);
+        printf(" set block size to %dx%d\n", arr_device[i].dimBlock.x, arr_device[i].dimBlock.y);
+        printf(" set grid size to %dx%d\n", arr_device[i].dimGrid.x, arr_device[i].dimGrid.y);
+
+        // Check the block size is valid
+        if (arr_device[i].dimBlock.x < RADIUS || arr_device[i].dimBlock.y < RADIUS)
+        {
+            printf("invalid block size, x (%d) and y (%d) must be >= radius (%d).\n", arr_device[i].dimBlock.x, arr_device[i].dimBlock.y, RADIUS);
+            exit(EXIT_FAILURE);
+        }
     }
 
-    // Copy the input to the device input buffer
-    checkCudaErrors(cudaMemcpy(bufferIn + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+    int offset = 0;
+    for (int i = 0; i < arr_device[0].num_devices; i++){
 
-    // Copy the input to the device output buffer (actually only need the halo)
-    checkCudaErrors(cudaMemcpy(bufferOut + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-    // Copy the coefficients to the device coefficient buffer
-    checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
+        offset += (arr_device[i].device * volumeSize * sizeof(float) / arr_device[0].num_devices);
 
+        // Copy the input to the device input buffer
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, volumeSize * sizeof(float) / arr_device[0].num_devices, cudaMemcpyHostToDevice));
+
+        // Copy the input to the device output buffer (actually only need the halo)
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, volumeSize * sizeof(float) / arr_device[0].num_devices, cudaMemcpyHostToDevice));
+
+        // Copy the coefficients to the device coefficient buffer
+        checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
+    }
+
+    // // Copy the input to the device input buffer
+    // checkCudaErrors(cudaMemcpy(bufferIn + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+    //
+    // // Copy the input to the device output buffer (actually only need the halo)
+    // checkCudaErrors(cudaMemcpy(bufferOut + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+    //
+    // // Copy the coefficients to the device coefficient buffer
+    // checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
+
+    checkCudaErrors(cudaSetDevice(arr_device[0].device));
 
 #ifdef GPU_PROFILING
 
@@ -149,11 +205,11 @@ bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float
 
 #endif
 
-    // Execute the FDTD
-    float *bufferSrc = bufferIn + padding;
-    float *bufferDst = bufferOut + padding;
-    printf(" GPU FDTD loop\n");
 
+    // Execute the FDTD
+    float *bufferSrc = arr_device[0].d_in + padding;
+    float *bufferDst = arr_device[0].d_out + padding;
+    printf(" GPU FDTD loop\n");
 
 #ifdef GPU_PROFILING
     // Enqueue start event
@@ -166,7 +222,7 @@ bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float
 
         // Launch the kernel
         printf("launch kernel\n");
-        FiniteDifferencesKernel<<<dimGrid, dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz);
+        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz / arr_device[0].num_devices);
 
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
@@ -187,7 +243,7 @@ bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float
     checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
-    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float) / arr_device[0].num_devices, cudaMemcpyDeviceToHost));
 
     // Report time
 #ifdef GPU_PROFILING
@@ -204,24 +260,24 @@ bool fdtdGPU(DEVICES *arr_device, float *output, const float *input, const float
         double elapsedTime    = elapsedTimeMS * 1.0e-3;
         double avgElapsedTime = elapsedTime / (double)profileTimesteps;
         // Determine number of computations per timestep
-        size_t pointsComputed = dimx * dimy * dimz;
+        size_t pointsComputed = dimx * dimy * dimz / arr_device[0].num_devices;
         // Determine throughput
         double throughputM    = 1.0e-6 * (double)pointsComputed / avgElapsedTime;
         printf("FDTD3d, Throughput = %.4f MPoints/s, Time = %.5f s, Size = %u Points, NumDevsUsed = %u, Blocksize = %u\n",
-               throughputM, avgElapsedTime, pointsComputed, 1, dimBlock.x * dimBlock.y);
+               throughputM, avgElapsedTime, pointsComputed, 1, arr_device[0].dimBlock.x * arr_device[0].dimBlock.y);
     }
 
 #endif
 
     // Cleanup
-    if (bufferIn)
+    if (arr_device[0].d_in)
     {
-        checkCudaErrors(cudaFree(bufferIn));
+        checkCudaErrors(cudaFree(arr_device[0].d_in));
     }
 
-    if (bufferOut)
+    if (arr_device[0].d_out)
     {
-        checkCudaErrors(cudaFree(bufferOut));
+        checkCudaErrors(cudaFree(arr_device[0].d_out));
     }
 
 #ifdef GPU_PROFILING
