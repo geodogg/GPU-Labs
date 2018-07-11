@@ -49,8 +49,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     const int         outerDimy  = dimy + 2 * radius;
     const int         outerDimz  = dimz + 2 * radius;
     const size_t      volumeSize = outerDimx * outerDimy * outerDimz;
-    int               deviceCount  = 0;
-    int               targetDevice = 0;
+    // int               deviceCount  = 0;
+    // int               targetDevice = 0;
     // float            *bufferOut    = 0;
     // float            *bufferIn     = 0;
     // dim3              dimBlock;
@@ -155,8 +155,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Set the block sizes
         arr_device[i].dimBlock.x = k_blockDimX;
         arr_device[i].dimBlock.y = ((userBlockSize / k_blockDimX) < (size_t)k_blockDimMaxY) ? (userBlockSize / k_blockDimX) : (size_t)k_blockDimMaxY;
-        arr_device[i].dimGrid.x = (unsigned int)ceil((float)dimx / dimBlock.x);
-        arr_device[i].dimGrid.y = (unsigned int)ceil((float)dimy / dimBlock.y);
+        arr_device[i].dimGrid.x = (unsigned int)ceil((float)dimx / arr_device[i].dimBlock.x);
+        arr_device[i].dimGrid.y = (unsigned int)ceil((float)dimy / arr_device[i].dimBlock.y);
         printf(" for device %d\n", arr_device[i].device);
         printf(" set block size to %dx%d\n", arr_device[i].dimBlock.x, arr_device[i].dimBlock.y);
         printf(" set grid size to %dx%d\n", arr_device[i].dimGrid.x, arr_device[i].dimGrid.y);
