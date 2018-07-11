@@ -95,9 +95,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // set cuda device
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
-        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_out), paddedVolumeSize * sizeof(float) / arr_device[0].num_devices));
+        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_out), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
         // set output device data
-        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_in), paddedVolumeSize * sizeof(float) / arr_device[0].num_devices));
+        checkCudaErrors(cudaMalloc((void **)&(arr_device[i].d_in), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
     }
 
     // Check for a command-line specified block size
@@ -174,8 +174,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-        offset += (arr_device[i].device * volumeSize * sizeof(float) / arr_device[0].num_devices);
-
         // Copy the input to the device input buffer
         checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, volumeSize * sizeof(float) / arr_device[0].num_devices, cudaMemcpyHostToDevice));
 
@@ -184,6 +182,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         // Copy the coefficients to the device coefficient buffer
         checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
+
+        offset += (arr_device[i].device * volumeSize * sizeof(float) / arr_device[0].num_devices);
+
     }
 
     // // Copy the input to the device input buffer
