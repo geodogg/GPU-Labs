@@ -190,6 +190,16 @@ bool runTest(int argc, const char **argv)
     // Initialize an array of devices
     DEVICES *arr_device = new DEVICES[num_devices];
 
+    // set gpu architecture abstrations
+    for (int i = 0; i < arr_device[0].num_devices; i++){
+
+        if (arr_device[i].d_out == NULL)
+            arr_device[i].d_out = 0;
+
+        if (arr_device[i].d_in == NULL)
+            arr_device[i].d_in = 0;
+    }
+
     // allocate and initialize an array of stream handles
     cudaStream_t *streams = (cudaStream_t *) malloc(num_devices * sizeof(cudaStream_t));
     cudaEvent_t *events = (cudaEvent_t *) malloc(num_devices * sizeof(cudaEvent_t));
@@ -247,7 +257,7 @@ bool runTest(int argc, const char **argv)
 
     // Execute on the device
     printf("fdtdGPU...\n");
-    fdtdGPU(arr_device, device_output, input, coeff, dimx, dimy, dimz, radius, timesteps, argc, argv);
+    fdtdGPU(streams, arr_device, device_output, input, coeff, dimx, dimy, dimz, radius, timesteps, argc, argv);
     printf("fdtdGPU complete\n");
 
     // Compare the results
