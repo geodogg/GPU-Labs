@@ -89,19 +89,14 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     //
     // // Allocate memory buffers
 
-    void **ptr_holdout = 0;
-    void **ptr_holdin = 0;
-
-    // allocate device data. split equally among GPUs
+     // allocate device data. split equally among GPUs
     for (int i = 0; i < arr_device[0].num_devices; i++){
         // set cuda device
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
-        checkCudaErrors(cudaMalloc(ptr_holdout, paddedVolumeSize * sizeof(float)));
-        arr_device[i].d_out = ptr_holdout;
+        checkCudaErrors(cudaMalloc((void **) (arr_device[i].d_out), paddedVolumeSize * sizeof(float)));
         // set output device data
-        checkCudaErrors(cudaMalloc(ptr_holdin, paddedVolumeSize * sizeof(float)));
-        arr_device[i].d_in = ptr_holdin;
+        checkCudaErrors(cudaMalloc((void **) (arr_device[i].d_in), paddedVolumeSize * sizeof(float)));
     }
 
     // // allocate device data. split equally among GPUs
