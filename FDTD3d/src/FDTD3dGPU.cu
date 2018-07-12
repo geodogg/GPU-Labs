@@ -189,17 +189,17 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
         // Copy the input to the device input buffer
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
 
         // Copy the input to the device output buffer (actually only need the halo)
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
-
-        // Copy the coefficients to the device coefficient buffer
-        checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
 
         offset += volumeSize * sizeof(float);
 
     }
+
+    // Copy the coefficients to the device coefficient buffer
+    checkCudaErrors(cudaMemcpyToSymbol((char *)stencil, (void *)coeff, (radius + 1) * sizeof(float), 0, cudaMemcpyHostToDevice));
 
     // // Copy the input to the device input buffer
     // checkCudaErrors(cudaMemcpy(bufferIn + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
@@ -209,12 +209,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     //
     // // Copy the coefficients to the device coefficient buffer
     // checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
-
-    checkCudaErrors(cudaSetDevice(arr_device[0].device));
-    // Execute the FDTD
-    float *bufferSrc = arr_device[0].d_in + padding;
-    float *bufferDst = arr_device[0].d_out + padding;
-    printf(" GPU FDTD loop\n");
 
 #ifdef GPU_PROFILING
     // Create the events
@@ -226,6 +220,13 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     // Enqueue start event
     checkCudaErrors(cudaEventRecord(profileStart, 0));
 #endif
+
+    checkCudaErrors(cudaSetDevice(arr_device[0].device));
+    // Execute the FDTD
+    float *bufferSrc = arr_device[0].d_in + padding;
+    float *bufferDst = arr_device[0].d_out + padding;
+    printf(" GPU FDTD loop\n");
+
 
     for (int it = 0 ; it < timesteps ; it++)
     {
