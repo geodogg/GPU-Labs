@@ -97,10 +97,10 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // set cuda device
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
-        checkCudaErrors(cudaMalloc((void **)&(ptr_out), paddedVolumeSize * sizeof(float)));
+        checkCudaErrors(cudaMalloc((void **) (&(ptr_out)), paddedVolumeSize * sizeof(float)));
         arr_device[i].d_out = ptr_out;
         // set output device data
-        checkCudaErrors(cudaMalloc((void **)&(ptr_in), paddedVolumeSize * sizeof(float)));
+        checkCudaErrors(cudaMalloc((void **) (&(ptr_in)), paddedVolumeSize * sizeof(float)));
         arr_device[i].d_in = ptr_in;
     }
 
@@ -210,26 +210,23 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     // // Copy the coefficients to the device coefficient buffer
     // checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
-    checkCudaErrors(cudaSetDevice(arr_device[0].device));
-
 #ifdef GPU_PROFILING
-
     // Create the events
     checkCudaErrors(cudaEventCreate(&profileStart));
     checkCudaErrors(cudaEventCreate(&profileEnd));
-
 #endif
-
-
-    // Execute the FDTD
-    float *bufferSrc = arr_device[0].d_in + padding;
-    float *bufferDst = arr_device[0].d_out + padding;
-    printf(" GPU FDTD loop\n");
 
 #ifdef GPU_PROFILING
     // Enqueue start event
     checkCudaErrors(cudaEventRecord(profileStart, 0));
 #endif
+
+    checkCudaErrors(cudaSetDevice(arr_device[0].device));
+    // Execute the FDTD
+    float *bufferSrc = arr_device[0].d_in + padding;
+    float *bufferDst = arr_device[0].d_out + padding;
+    printf(" GPU FDTD loop\n");
+
 
     for (int it = 0 ; it < timesteps ; it++)
     {
@@ -287,12 +284,14 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     // Cleanup
     if (arr_device[0].d_in)
     {
-        checkCudaErrors(cudaFree(arr_device[0].d_in));
+      //  checkCudaErrors(cudaFree(arr_device[0].d_in));
+        checkCudaErrors(cudaFree(ptr_in));
     }
 
     if (arr_device[0].d_out)
     {
-        checkCudaErrors(cudaFree(arr_device[0].d_out));
+      //  checkCudaErrors(cudaFree(arr_device[0].d_out));
+        checkCudaErrors(cudaFree(ptr_out));
     }
 
 #ifdef GPU_PROFILING
