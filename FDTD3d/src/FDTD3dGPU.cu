@@ -236,8 +236,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz);
 
-        checkCudaErrors(cudaSetDevice(1000021));
-
 
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
@@ -246,6 +244,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         bufferDst = bufferSrc;
         bufferSrc = tmp;
     }
+
+    checkCudaErrors(cudaSetDevice(1000021));
 
     printf("\n");
 
