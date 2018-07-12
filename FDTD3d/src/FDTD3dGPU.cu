@@ -210,6 +210,12 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     // // Copy the coefficients to the device coefficient buffer
     // checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
+    checkCudaErrors(cudaSetDevice(arr_device[0].device));
+    // Execute the FDTD
+    float *bufferSrc = arr_device[0].d_in + padding;
+    float *bufferDst = arr_device[0].d_out + padding;
+    printf(" GPU FDTD loop\n");
+
 #ifdef GPU_PROFILING
     // Create the events
     checkCudaErrors(cudaEventCreate(&profileStart));
@@ -220,13 +226,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     // Enqueue start event
     checkCudaErrors(cudaEventRecord(profileStart, 0));
 #endif
-
-    checkCudaErrors(cudaSetDevice(arr_device[0].device));
-    // Execute the FDTD
-    float *bufferSrc = arr_device[0].d_in + padding;
-    float *bufferDst = arr_device[0].d_out + padding;
-    printf(" GPU FDTD loop\n");
-
 
     for (int it = 0 ; it < timesteps ; it++)
     {
