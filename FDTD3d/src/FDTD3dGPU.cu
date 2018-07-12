@@ -227,6 +227,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     float *bufferDst = arr_device[0].d_out + padding;
     printf(" GPU FDTD loop\n");
 
+    checkCudaErrors(cudaSetDevice("arr_device[0].device"));
+
     for (int it = 0 ; it < timesteps ; it++)
     {
         printf("\tt = %d ", it);
@@ -254,7 +256,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
-    checkCudaErrors(cudaMemcpy(&output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
 
     // Report time
 #ifdef GPU_PROFILING
