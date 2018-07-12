@@ -257,7 +257,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaSetDevice(1000021));
 
     // Read the result back, result is in bufferSrc (after final toggle)
-    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy((void *)output, (void *)bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
 
     // Report time
 #ifdef GPU_PROFILING
