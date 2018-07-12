@@ -31,8 +31,8 @@ typedef struct
 {
     int device;            // device ID
     int data_size;         // bytes of data to be processed on device
-    float *d_out;          // pointer to device output data
-    float *d_in;           // pointer to device input data
+    void *d_out;          // pointer to device output data
+    void *d_in;           // pointer to device input data
     float *h_out;          // pointer to host location of data
     float *u_data;         // pointer to unified d_data
     dim3 dimBlock;
