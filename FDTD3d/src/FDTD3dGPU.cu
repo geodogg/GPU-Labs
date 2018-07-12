@@ -89,8 +89,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     //
     // // Allocate memory buffers
 
-    void **ptr_holdout;
-    void **ptr_holdin;
+    void **ptr_holdout = 0;
+    void **ptr_holdin = 0;
 
     // allocate device data. split equally among GPUs
     for (int i = 0; i < arr_device[0].num_devices; i++){
