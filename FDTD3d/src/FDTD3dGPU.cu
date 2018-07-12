@@ -91,17 +91,17 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
      // allocate device data. split equally among GPUs
     for (int i = 0; i < arr_device[0].num_devices; i++){
-//        float *ptr_out;
-//        float *ptr_in;
+        float *ptr_out = 0;
+        float *ptr_in = 0;
 
         // set cuda device
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
-        checkCudaErrors(cudaMalloc(&(arr_device[i].d_out), paddedVolumeSize * sizeof(float)));
-//        arr_device[i].d_out = ptr_out;
+        checkCudaErrors(cudaMalloc((void **)&(ptr_out), paddedVolumeSize * sizeof(float)));
+        arr_device[i].d_out = ptr_in;
         // set output device data
-        checkCudaErrors(cudaMalloc(&(arr_device[i].d_in), paddedVolumeSize * sizeof(float)));
-//        arr_device[i].d_in = ptr_in;
+        checkCudaErrors(cudaMalloc((void **)&(ptr_in), paddedVolumeSize * sizeof(float)));
+        arr_device[i].d_in = ptr_in;
     }
 
     // // allocate device data. split equally among GPUs
@@ -189,10 +189,10 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
         // Copy the input to the device input buffer
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
 
         // Copy the input to the device output buffer (actually only need the halo)
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
 
         // Copy the coefficients to the device coefficient buffer
         checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
@@ -222,8 +222,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
 
     // Execute the FDTD
-    void *bufferSrc = arr_device[0].d_in + padding;
-    void *bufferDst = arr_device[0].d_out + padding;
+    float *bufferSrc = arr_device[0].d_in + padding;
+    float *bufferDst = arr_device[0].d_out + padding;
     printf(" GPU FDTD loop\n");
 
 #ifdef GPU_PROFILING
