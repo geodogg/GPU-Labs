@@ -245,17 +245,16 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         bufferSrc = tmp;
     }
 
-    checkCudaErrors(cudaSetDevice(1000021));
-
     printf("\n");
 
 #ifdef GPU_PROFILING
     // Enqueue end event
     checkCudaErrors(cudaEventRecord(profileEnd, 0));
 #endif
-
     // Wait for the kernel to complete
     checkCudaErrors(cudaDeviceSynchronize());
+
+    checkCudaErrors(cudaSetDevice(1000021));
 
     // Read the result back, result is in bufferSrc (after final toggle)
     checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
