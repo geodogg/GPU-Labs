@@ -190,15 +190,15 @@ bool runTest(int argc, const char **argv)
     // Initialize an array of devices
     DEVICES *arr_device = new DEVICES[num__devices];
 
-    // set gpu architecture abstrations
-    for (int i = 0; i < arr_device[0].num_devices; i++){
-
-        if (arr_device[i].d_out == NULL)
-            arr_device[i].d_out = 0;
-
-        if (arr_device[i].d_in == NULL)
-            arr_device[i].d_in = 0;
-    }
+    // // set gpu architecture abstrations
+    // for (int i = 0; i < arr_device[0].num_devices; i++){
+    //
+    //     if (arr_device[i].d_out == NULL)
+    //         arr_device[i].d_out = 0;
+    //
+    //     if (arr_device[i].d_in == NULL)
+    //         arr_device[i].d_in = 0;
+    // }
 
     // allocate and initialize an array of stream handles
     cudaStream_t *streams = (cudaStream_t *) malloc(num__devices * sizeof(cudaStream_t));
