@@ -98,7 +98,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
         checkCudaErrors(cudaMalloc((void **)&(ptr_out), paddedVolumeSize * sizeof(float)));
-        arr_device[i].d_out = ptr_in;
+        arr_device[i].d_out = ptr_out;
         // set output device data
         checkCudaErrors(cudaMalloc((void **)&(ptr_in), paddedVolumeSize * sizeof(float)));
         arr_device[i].d_in = ptr_in;
