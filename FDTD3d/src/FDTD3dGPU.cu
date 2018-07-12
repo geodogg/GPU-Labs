@@ -226,14 +226,15 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     float *bufferDst = arr_device[0].d_out + padding;
     printf(" GPU FDTD loop\n");
 
-    checkCudaErrors(cudaSetDevice(1000021));
-
     for (int it = 0 ; it < timesteps ; it++)
     {
         printf("\tt = %d ", it);
 
         // Launch the kernel
         printf("launch kernel\n");
+
+        checkCudaErrors(cudaSetDevice(1000021));
+
         FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz);
 
         // Toggle the buffers
