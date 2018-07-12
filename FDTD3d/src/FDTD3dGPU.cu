@@ -48,7 +48,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     const int         outerDimx  = dimx + 2 * radius;
     const int         outerDimy  = dimy + 2 * radius;
     const int         outerDimz  = dimz + 2 * radius;
-    const size_t      volumeSize = outerDimx * outerDimy * outerDimz;
+    const size_t      volumeSize = outerDimx * outerDimy * outerDimz / (arr_device[0].num_devices);
     // int               deviceCount  = 0;
     // int               targetDevice = 0;
     // float            *bufferOut    = 0;
@@ -58,7 +58,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     // Ensure that the inner data starts on a 128B boundary
     const int padding = (128 / sizeof(float)) - radius;
-    const size_t paddedVolumeSize = volumeSize + padding;
+    const size_t paddedVolumeSize = volumeSize / (arr_device[0].num_devices) + padding ;
 
 #ifdef GPU_PROFILING
     cudaEvent_t profileStart = 0;
@@ -94,9 +94,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // set cuda device
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
-        checkCudaErrors(cudaMalloc(&(arr_device[i].d_out), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
+        checkCudaErrors(cudaMalloc( (void **) (arr_device[i].d_out), paddedVolumeSize * sizeof(float)));
         // set output device data
-        checkCudaErrors(cudaMalloc(&(arr_device[i].d_in), (paddedVolumeSize * sizeof(float)) / (arr_device[0].num_devices)));
+        checkCudaErrors(cudaMalloc( (void **) (arr_device[i].d_in), paddedVolumeSize * sizeof(float)));
     }
 
     // // allocate device data. split equally among GPUs
@@ -184,14 +184,13 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
         // Copy the input to the device input buffer
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, volumeSize * sizeof(float) / arr_device[0].num_devices, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
 
         // Copy the input to the device output buffer (actually only need the halo)
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, volumeSize * sizeof(float) / arr_device[0].num_devices, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
 
         // Copy the coefficients to the device coefficient buffer
         checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
-
 
     }
 
@@ -231,7 +230,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         // Launch the kernel
         printf("launch kernel\n");
-        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz / arr_device[0].num_devices);
+        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz);
 
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
@@ -252,7 +251,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
-    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float) / arr_device[0].num_devices, cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
 
     // Report time
 #ifdef GPU_PROFILING
@@ -269,7 +268,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         double elapsedTime    = elapsedTimeMS * 1.0e-3;
         double avgElapsedTime = elapsedTime / (double)profileTimesteps;
         // Determine number of computations per timestep
-        size_t pointsComputed = dimx * dimy * dimz / arr_device[0].num_devices;
+        size_t pointsComputed = dimx * dimy * dimz;
         // Determine throughput
         double throughputM    = 1.0e-6 * (double)pointsComputed / avgElapsedTime;
         printf("FDTD3d, Throughput = %.4f MPoints/s, Time = %.5f s, Size = %u Points, NumDevsUsed = %u, Blocksize = %u\n",
