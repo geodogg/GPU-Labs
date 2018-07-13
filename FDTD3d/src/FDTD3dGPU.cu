@@ -43,7 +43,7 @@ bool getTargetDeviceGlobalMemSize(memsize_t *result, const int argc, const char 
     return true;
 }
 
-bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float &output, const float *input, const float *coeff, const int dimx, const int dimy, const int dimz, const int radius, const int timesteps, const int argc, const char **argv)
+bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const float *input, const float *coeff, const int dimx, const int dimy, const int dimz, const int radius, const int timesteps, const int argc, const char **argv)
 {
     const int         outerDimx  = dimx + 2 * radius;
     const int         outerDimy  = dimy + 2 * radius;
@@ -255,7 +255,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float &output, const fl
     checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
-    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+    checkCudaErrors(cudaMemcpy( (void *)output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
 
     // Report time
 #ifdef GPU_PROFILING
