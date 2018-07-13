@@ -104,8 +104,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         arr_device[i].d_in = ptr_in;
     }
 
-    checkCudaErrors(cudaSetDevice(1000));
-
     // // allocate device data. split equally among GPUs
     // for (int i = 0; i < arr_device[0].num_devices; i++){
     //     // set cuda device
@@ -200,8 +198,12 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     }
 
-    // Copy the coefficients to the device coefficient buffer
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
+
+    checkCudaErrors(cudaSetDevice(10000));
+
+
+    // Copy the coefficients to the device coefficient buffer
 
     // // Copy the input to the device input buffer
     // checkCudaErrors(cudaMemcpy(bufferIn + padding, input, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
