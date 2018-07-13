@@ -253,7 +253,7 @@ bool runTest(int argc, const char **argv)
     printf("fdtdReference complete\n");
 
     // Allocate memory
-    device_output = (float *)(volumeSize, sizeof(float));
+    device_output = (float *)calloc(volumeSize, sizeof(float));
 
     // Execute on the device
     printf("fdtdGPU...\n");
