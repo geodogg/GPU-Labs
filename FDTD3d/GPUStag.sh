@@ -4,4 +4,5 @@
 #SBATCH --gres=gpu:2              # request GPU "generic resource", 4 on Cedar, 2 on Graham
 #SBATCH --mem=32GB               # memory per node
 #SBATCH --time=0-00:10            # time (DD-HH:MM)
+#SBATCH --output=%N-%j.out       # %N for node name., %j for jobID
 ./FDTD3d
