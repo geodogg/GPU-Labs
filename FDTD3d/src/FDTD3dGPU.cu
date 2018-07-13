@@ -200,8 +200,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
-    checkCudaErrors(cudaSetDevice(10000));
-
 
     // Copy the coefficients to the device coefficient buffer
 
@@ -237,8 +235,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Launch the kernel
         printf("launch kernel\n");
 
+        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz/2);
 
-        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz);
+        //
 
 
         // Toggle the buffers
@@ -257,6 +256,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 #endif
     // Wait for the kernel to complete
     checkCudaErrors(cudaDeviceSynchronize());
+
+    checkCudaErrors(cudaSetDevice(10000));
 
     // Read the result back, result is in bufferSrc (after final toggle)
     checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
