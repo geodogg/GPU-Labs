@@ -20,7 +20,7 @@
 
 void swap_ptr(float &bufferDst, float &bufferSrc){
 
-  float tmp;
+  float tmp = 0;
   float* ptr_tmp = &tmp;
   tmp = bufferDst;
   bufferDst = bufferSrc;
@@ -258,7 +258,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, arr_device[0].d_in, dimx, dimy, dimz / arr_device[0].num_devices);
 
-            swap_ptr(bufferDst, bufferSrc);
+            swap_ptr(arr_device[i].d_out, arr_device[0].d_in);
 
             checkCudaErrors(cudaSetDevice(100));
 
