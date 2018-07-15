@@ -223,7 +223,7 @@ bool runTest(int argc, const char **argv)
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ////////////////////////////////////////////////////////////////////////////
 
-    dimz *= arr_device[0].num_devices;  // scale the data by the number of gpu's
+//    dimz *= arr_device[0].num_devices;  // scale the data by the number of gpu's
 
     // Determine volume size
     outerDimx = dimx + 2 * radius;
@@ -252,13 +252,30 @@ bool runTest(int argc, const char **argv)
     fdtdReference(host_output, input, coeff, dimx, dimy, dimz, radius, timesteps);
     printf("fdtdReference complete\n");
 
-    // Allocate memory
+    // Determine volume size
+    outerDimx = dimx + 2 * radius;
+    outerDimy = dimy + 2 * radius;
+    outerDimz = dimz / num_devices + 2 * radius;
+    volumeSizePerDevice = outerDimx * outerDimy * outerDimz;
+
+    // Allocate memory host memory
     device_output = (float *)calloc(volumeSize, sizeof(float));
+    for (int i = 0; i < num__devices; i++) {
+        arr_device[i].h_out = (float *)calloc(volumeSizePerDevice, sizeof(float));
+        arr_device[i].data_size_device = volumeSizePerDevice;
+        arr_device[i].data_size_total = volumeSize;
+    }
 
     // Execute on the device
     printf("fdtdGPU...\n");
     fdtdGPU(streams, arr_device, device_output, input, coeff, dimx, dimy, dimz, radius, timesteps, argc, argv);
     printf("fdtdGPU complete\n");
+
+    // Determine volume size
+    outerDimx = dimx + 2 * radius;
+    outerDimy = dimy + 2 * radius;
+    outerDimz = dimz + 2 * radius;
+    volumeSize = outerDimx * outerDimy * outerDimz;
 
     // Compare the results
     float tolerance = 0.0001f;

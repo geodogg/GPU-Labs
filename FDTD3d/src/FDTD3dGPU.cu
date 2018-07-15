@@ -48,7 +48,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     const int         outerDimx  = dimx + 2 * radius;
     const int         outerDimy  = dimy + 2 * radius;
     const int         outerDimz  = dimz + 2 * radius;
-    const size_t      volumeSize = outerDimx * outerDimy * outerDimz / (arr_device[0].num_devices);
+    const size_t      volumeSize = outerDimx * outerDimy * outerDimz);
     // int               deviceCount  = 0;
     // int               targetDevice = 0;
     // float            *bufferOut    = 0;
@@ -58,7 +58,11 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     // Ensure that the inner data starts on a 128B boundary
     const int padding = (128 / sizeof(float)) - radius;
-    const size_t paddedVolumeSize = volumeSize + padding ;
+
+    for (int i = 0; i < arr_device[0].num_devices; i++){
+        arr_device[i].paddedVolumeSize = arr_device[i].data_size_device + padding;
+    }
+
 
 #ifdef GPU_PROFILING
     cudaEvent_t profileStart = 0;
@@ -97,10 +101,10 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // set cuda device
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
         // set input device data
-        checkCudaErrors(cudaMalloc((void **) (&(ptr_out)), paddedVolumeSize * sizeof(float)));
+        checkCudaErrors(cudaMalloc((void **) (&(ptr_out)), arr_device[i].paddedVolumeSize * sizeof(float)));
         arr_device[i].d_out = ptr_out;
         // set output device data
-        checkCudaErrors(cudaMalloc((void **) (&(ptr_in)), paddedVolumeSize * sizeof(float)));
+        checkCudaErrors(cudaMalloc((void **) (&(ptr_in)), arr_device[i].paddedVolumeSize * sizeof(float)));
         arr_device[i].d_in = ptr_in;
     }
 
@@ -189,19 +193,16 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
         // Copy the input to the device input buffer
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_in + padding, input + offset, arr_device[i].data_size_device * sizeof(float), cudaMemcpyHostToDevice));
 
         // Copy the input to the device output buffer (actually only need the halo)
-        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, volumeSize * sizeof(float), cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, arr_device[i].data_size_device * sizeof(float), cudaMemcpyHostToDevice));
 
-        offset += volumeSize * sizeof(float);
+        offset += arr_device[i].data_size_device * sizeof(float);
 
     }
 
-
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
-
-    checkCudaErrors(cudaSetDevice(10000));
 
     // Copy the coefficients to the device coefficient buffer
 
@@ -225,6 +226,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaEventRecord(profileStart, 0));
 #endif
 
+    checkCudaErrors(cudaSetDevice(100));
+
+
     // Execute the FDTD
     float *bufferSrc = arr_device[0].d_in + padding;
     float *bufferDst = arr_device[0].d_out + padding;
@@ -237,7 +241,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Launch the kernel
         printf("launch kernel\n");
 
-        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz/2);
+
+        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz / 2);
 
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
