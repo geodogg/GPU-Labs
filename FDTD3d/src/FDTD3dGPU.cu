@@ -18,6 +18,14 @@
 
 #include "FDTD3dGPUKernel.cuh"
 
+void swap(float &bufferDst, float &bufferSrc){
+
+  float *tmp = bufferDst;
+  bufferDst = bufferSrc;
+  bufferSrc = tmp;
+
+}
+
 bool getTargetDeviceGlobalMemSize(memsize_t *result, const int argc, const char **argv)
 {
     int               deviceCount  = 0;
@@ -226,9 +234,12 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaEventRecord(profileStart, 0));
 #endif
 
-    // Execute the FDTD
-    float *bufferSrc = arr_device[0].d_in + padding;
-    float *bufferDst = arr_device[0].d_out + padding;
+    // pad addresses.
+    for (int i = 0; i < arr_device[0].num_devices; i++){
+        arr_device[i].d_in += padding;
+        arr_device[i].d_out += padding;
+    }
+
     printf(" GPU FDTD loop\n");
 
     for (int it = 0 ; it < timesteps ; it++)
@@ -244,7 +255,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(bufferDst, bufferSrc, dimx, dimy, dimz / arr_device[0].num_devices);
+            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, arr_device[0].d_in, dimx, dimy, dimz / arr_device[0].num_devices);
+
+            swap(bufferDst, bufferSrc);
 
             checkCudaErrors(cudaSetDevice(100));
 
@@ -253,9 +266,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
         //    std::swap<float *>(bufferSrc, bufferDst);
-        float *tmp = bufferDst;
-        bufferDst = bufferSrc;
-        bufferSrc = tmp;
+        // float *tmp = bufferDst;
+        // bufferDst = bufferSrc;
+        // bufferSrc = tmp;
     }
 
     printf("\n");
