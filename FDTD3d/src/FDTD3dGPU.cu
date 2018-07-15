@@ -204,6 +204,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     }
 
+    checkCudaErrors(cudaSetDevice(100));
+
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
     // Copy the coefficients to the device coefficient buffer
@@ -265,7 +267,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // bufferSrc = tmp;
     }
 
-    checkCudaErrors(cudaSetDevice(100));
 
     printf("\n");
 
