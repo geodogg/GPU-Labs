@@ -265,7 +265,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // bufferSrc = tmp;
     }
 
-    // run this. There was error with scaling up to 4 gpus.
+    // run this. There was error with scaling up to 4 gpus. already published on git 
     checkCudaErrors(cudaSetDevice(100));
 
 
