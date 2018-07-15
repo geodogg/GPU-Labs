@@ -18,15 +18,6 @@
 
 #include "FDTD3dGPUKernel.cuh"
 
-void swap_ptr(float &bufferDst, float &bufferSrc){
-
-  float tmp = 0;
-  float* ptr_tmp = &tmp;
-  tmp = bufferDst;
-  bufferDst = bufferSrc;
-  bufferSrc = tmp;
-}
-
 bool getTargetDeviceGlobalMemSize(memsize_t *result, const int argc, const char **argv)
 {
     int               deviceCount  = 0;
@@ -256,9 +247,11 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, arr_device[0].d_in, dimx, dimy, dimz / arr_device[0].num_devices);
+            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy, dimz / arr_device[0].num_devices);
 
-            swap_ptr(arr_device[i].d_out, arr_device[0].d_in);
+            float *tmp = arr_device[i].d_out;
+            arr_device[i].d_out = arr_device[i].d_in;
+            arr_device[i].d_in = tmp;
 
             checkCudaErrors(cudaSetDevice(100));
 
@@ -284,7 +277,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
-    checkCudaErrors(cudaMemcpy(output, bufferSrc, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy(output, arr_device[0].d_out, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
 
     // Report time
 #ifdef GPU_PROFILING
