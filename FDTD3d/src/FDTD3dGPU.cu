@@ -18,12 +18,13 @@
 
 #include "FDTD3dGPUKernel.cuh"
 
-void swap(float &bufferDst, float &bufferSrc){
+void swap_ptr(float &bufferDst, float &bufferSrc){
 
-  float *tmp = bufferDst;
+  float tmp;
+  float* ptr_tmp = &tmp;
+  tmp = bufferDst;
   bufferDst = bufferSrc;
   bufferSrc = tmp;
-
 }
 
 bool getTargetDeviceGlobalMemSize(memsize_t *result, const int argc, const char **argv)
@@ -257,7 +258,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, arr_device[0].d_in, dimx, dimy, dimz / arr_device[0].num_devices);
 
-            swap(bufferDst, bufferSrc);
+            swap_ptr(bufferDst, bufferSrc);
 
             checkCudaErrors(cudaSetDevice(100));
 
