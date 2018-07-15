@@ -255,8 +255,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         }
 
-checkCudaErrors(cudaSetDevice(100));
-
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
         //    std::swap<float *>(bufferSrc, bufferDst);
@@ -267,7 +265,7 @@ checkCudaErrors(cudaSetDevice(100));
 
     printf("\n");
 
-
+    checkCudaErrors(cudaSetDevice(100));
 
 #ifdef GPU_PROFILING
     // Enqueue end event
