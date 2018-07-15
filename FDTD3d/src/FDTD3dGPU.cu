@@ -238,9 +238,17 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Launch the kernel
         printf("launch kernel\n");
 
-        FiniteDifferencesKernel<<<arr_device[0].dimGrid, arr_device[0].dimBlock>>>(bufferDst, bufferSrc, dimx, dimy, dimz / 2);
+        for (int i = 0; i < arr_device[0].num_devices; i++){
 
-        checkCudaErrors(cudaSetDevice(100));
+            printf("for device %d\n", arr_device[i].device);
+
+            checkCudaErrors(cudaSetDevice(arr_device[i].device));
+
+            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(bufferDst, bufferSrc, dimx, dimy, dimz / arr_device[0].num_devices);
+
+            checkCudaErrors(cudaSetDevice(100));
+
+        }
 
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
@@ -251,6 +259,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     }
 
     printf("\n");
+
+
 
 #ifdef GPU_PROFILING
     // Enqueue end event
