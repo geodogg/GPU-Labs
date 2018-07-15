@@ -48,7 +48,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     const int         outerDimx  = dimx + 2 * radius;
     const int         outerDimy  = dimy + 2 * radius;
     const int         outerDimz  = dimz + 2 * radius;
-    const size_t      volumeSize = outerDimx * outerDimy * outerDimz);
+    const size_t      volumeSize = outerDimx * outerDimy * outerDimz;
     // int               deviceCount  = 0;
     // int               targetDevice = 0;
     // float            *bufferOut    = 0;
