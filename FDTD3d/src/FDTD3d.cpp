@@ -101,6 +101,7 @@ bool runTest(int argc, const char **argv)
     int radius;
     int timesteps;
     size_t volumeSize;
+    size_t volumeSizePerDevice;
     memsize_t memsize;
 
     const float lowerBound = 0.0f;
@@ -255,7 +256,7 @@ bool runTest(int argc, const char **argv)
     // Determine volume size
     outerDimx = dimx + 2 * radius;
     outerDimy = dimy + 2 * radius;
-    outerDimz = dimz / num_devices + 2 * radius;
+    outerDimz = dimz / num__devices + 2 * radius;
     volumeSizePerDevice = outerDimx * outerDimy * outerDimz;
 
     // Allocate memory host memory
