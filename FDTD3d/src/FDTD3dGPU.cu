@@ -187,6 +187,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         }
     }
 
+    checkCudaErrors(cudaSetDevice(100));
+
     int offset = 0;
     for (int i = 0; i < arr_device[0].num_devices; i++){
 
@@ -233,8 +235,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     }
 
     printf(" GPU FDTD loop\n");
-
-    checkCudaErrors(cudaSetDevice(100));
 
     for (int it = 0 ; it < timesteps ; it++)
     {
