@@ -49,6 +49,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     const int         outerDimy  = dimy + 2 * radius;
     const int         outerDimz  = dimz + 2 * radius;
     const size_t      volumeSize = outerDimx * outerDimy * outerDimz;
+    const size_t      volumeSize_device = volumeSize / arr_device[0].num_devices;
+
     // int               deviceCount  = 0;
     // int               targetDevice = 0;
     // float            *bufferOut    = 0;
@@ -187,8 +189,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         }
     }
 
-    checkCudaErrors(cudaSetDevice(100));
-
     int offset = 0;
     for (int i = 0; i < arr_device[0].num_devices; i++){
 
@@ -200,9 +200,11 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Copy the input to the device output buffer (actually only need the halo)
         checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, arr_device[i].data_size_device * sizeof(float), cudaMemcpyHostToDevice));
 
-        offset += arr_device[i].data_size_device * sizeof(float);
+        offset += volumeSize_device * sizeof(float);
 
     }
+
+    checkCudaErrors(cudaSetDevice(100));
 
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
