@@ -234,6 +234,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     printf(" GPU FDTD loop\n");
 
+    checkCudaErrors(cudaSetDevice(100));
+
     for (int it = 0 ; it < timesteps ; it++)
     {
         printf("\tt = %d ", it);
@@ -265,7 +267,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     printf("\n");
 
-    checkCudaErrors(cudaSetDevice(100));
 
 #ifdef GPU_PROFILING
     // Enqueue end event
