@@ -202,8 +202,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         offset += volumeSize_device * sizeof(float);
 
-        checkCudaErrors(cudaSetDevice(100));
     }
+    
+    checkCudaErrors(cudaSetDevice(100));
 
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
