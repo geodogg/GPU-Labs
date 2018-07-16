@@ -200,10 +200,10 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Copy the input to the device output buffer (actually only need the halo)
         checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, arr_device[i].data_size_device * sizeof(float), cudaMemcpyHostToDevice));
 
-        offset += volumeSize_device * sizeof(float);
+        offset += (volumeSize * sizeof(float));
 
     }
-    
+
     checkCudaErrors(cudaSetDevice(100));
 
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
