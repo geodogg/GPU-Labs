@@ -265,6 +265,7 @@ bool runTest(int argc, const char **argv)
         arr_device[i].h_out = (float *)calloc(volumeSizePerDevice, sizeof(float));
         arr_device[i].data_size_device = volumeSizePerDevice;
         arr_device[i].data_size_total = volumeSize;
+        arr_device[i].in_data = input;
     }
 
     // Execute on the device

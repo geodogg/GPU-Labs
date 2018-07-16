@@ -23,7 +23,8 @@ __global__ void FiniteDifferencesKernel(float *output,
                                         const float *input,
                                         const int dimx,
                                         const int dimy,
-                                        const int dimz)
+                                        const int dimz,
+                                        DEVICES *arr_device)
 {
     bool validr = true;
     bool validw = true;
