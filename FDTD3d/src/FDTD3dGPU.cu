@@ -246,8 +246,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     printf(" GPU FDTD loop\n");
 
-    checkCudaErrors(cudaSetDevice(100));
-
     for (int it = 0 ; it < timesteps ; it++)
     {
         printf("\tt = %d ", it);
@@ -261,7 +259,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst,arr_device[i].d_in, dimx, dimy, dimz / arr_device[0].num_devices, arr_device);
+            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy, dimz / arr_device[0].num_devices, arr_device);
 
             float *tmp = arr_device[i].d_out;
             arr_device[i].d_out = arr_device[i].d_in;
@@ -278,6 +276,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     }
 
     // Haven't coalesed the outputs from GPUs together yet
+    checkCudaErrors(cudaSetDevice(100));
 
 
     printf("\n");
