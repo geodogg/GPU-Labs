@@ -200,11 +200,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Copy the input to the device output buffer (actually only need the halo)
         checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, arr_device[i].data_size_device * sizeof(float), cudaMemcpyHostToDevice));
 
-        offset += (volumeSize * sizeof(float));
+        offset += (volumeSize);
 
     }
-
-    checkCudaErrors(cudaSetDevice(100));
 
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
@@ -244,6 +242,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         // Launch the kernel
         printf("launch kernel\n");
+
+        checkCudaErrors(cudaSetDevice(100));
+
 
         for (int i = 0; i < arr_device[0].num_devices; i++){
 
