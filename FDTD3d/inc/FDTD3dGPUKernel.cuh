@@ -20,6 +20,7 @@ namespace cg = cooperative_groups;
 __constant__ float stencil[RADIUS + 1];
 
 __global__ void FiniteDifferencesKernel(float *output,
+                                        float *outputFULL,
                                         const float *input,
                                         const int dimx,
                                         const int dimy,
@@ -28,18 +29,19 @@ __global__ void FiniteDifferencesKernel(float *output,
 {
     bool validr = true;
     bool validw = true;
-    const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;
-    const int gtidy = blockIdx.y * blockDim.y + threadIdx.y;
-    const int ltidx = threadIdx.x;
-    const int ltidy = threadIdx.y;
-    const int workx = blockDim.x;
-    const int worky = blockDim.y;
+    const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;   // device global grid index x
+    const int gtidy = blockIdx.y * blockDim.y + threadIdx.y;   // device global grid index y
+    const int ltidx = threadIdx.x;  // thread index x in the block
+    const int ltidy = threadIdx.y;  // thread index y in the block
+    const int workx = blockDim.x;   // block index x in the grid
+    const int worky = blockDim.y;   // block index y in the grid
     // Handle to thread block group
     cg::thread_block cta = cg::this_thread_block();
     __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
 
-    const int stride_y = dimx + 2 * RADIUS;
-    const int stride_z = stride_y * (dimy + 2 * RADIUS);
+    const int stride_y = dimx + 2 * RADIUS;                     // the stride in the y direction
+    const int stride_z = stride_y * (dimy + 2 * RADIUS);        // the stride in the z direction,
+                                                                // meaning it counts the number of threads until moving down the z-direction
 
     int inputIndex  = 0;
     int outputIndex = 0;
@@ -56,6 +58,8 @@ __global__ void FiniteDifferencesKernel(float *output,
 
     const int tx = ltidx + RADIUS;
     const int ty = ltidy + RADIUS;
+
+    // Check if the input data is along the partitioning of the data and copy data if nessesary.
 
     // Check in bounds
     if ((gtidx >= dimx + RADIUS) || (gtidy >= dimy + RADIUS))
@@ -145,7 +149,12 @@ __global__ void FiniteDifferencesKernel(float *output,
         }
 
         // Store the output value
-        if (validw)
-            output[outputIndex] = value;
+        if (validw){
+          output[outputIndex] = value;
+
+          int current_device = 0;
+          checkCudaErrors(cudaGetDevice(&current_device));
+          outputFULL[outputIndex + current_device * arr_device[0].volumeSizeOffset] = value;
+        }
     }
 }

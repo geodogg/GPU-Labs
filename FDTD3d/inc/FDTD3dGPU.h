@@ -33,6 +33,7 @@ typedef struct
     size_t data_size_device;         // bytes of data to be processed on device
     size_t data_size_total;         // bytes of data to be processed by program
     size_t paddedVolumeSize;
+    size_t volumeSizeOffset;        // Offset volume size
     float *d_out;          // pointer to device output data
     float *d_in;           // pointer to device input data
     float *h_out;          // pointer to host location of data

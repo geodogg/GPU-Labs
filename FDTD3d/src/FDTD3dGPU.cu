@@ -62,7 +62,11 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     for (int i = 0; i < arr_device[0].num_devices; i++){
         arr_device[i].paddedVolumeSize = arr_device[i].data_size_device + padding;
+        arr_device[i].volumeSizeOffset = volumeSize;
     }
+
+    const size_t paddedVolumeSize_full = outerDimx * outerDimy * outerDimz + padding;
+    float *bufferOut = 0;
 
 
 #ifdef GPU_PROFILING
@@ -108,6 +112,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         checkCudaErrors(cudaMalloc((void **) (&(ptr_in)), arr_device[i].paddedVolumeSize * sizeof(float)));
         arr_device[i].d_in = ptr_in;
     }
+
+    checkCudaErrors(cudaMalloc((void **)&bufferOut, paddedVolumeSize_full * sizeof(float)));
 
     // // allocate device data. split equally among GPUs
     // for (int i = 0; i < arr_device[0].num_devices; i++){
@@ -203,6 +209,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     }
 
+    // Copy the input to the device output buffer (actually only need the halo)
+    checkCudaErrors(cudaMemcpy(bufferOut + padding, input, outerDimx * outerDimy * outerDimz * sizeof(float), cudaMemcpyHostToDevice));
+
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
     // Copy the coefficients to the device coefficient buffer
@@ -233,7 +242,11 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         arr_device[i].d_out += padding;
     }
 
+    float *bufferDst = bufferOut + padding;
+
     printf(" GPU FDTD loop\n");
+
+    checkCudaErrors(cudaSetDevice(100));
 
     for (int it = 0 ; it < timesteps ; it++)
     {
@@ -248,7 +261,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy, dimz / arr_device[0].num_devices, arr_device);
+            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst,arr_device[i].d_in, dimx, dimy, dimz / arr_device[0].num_devices, arr_device);
 
             float *tmp = arr_device[i].d_out;
             arr_device[i].d_out = arr_device[i].d_in;
@@ -264,8 +277,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // bufferSrc = tmp;
     }
 
-    // run this. There was error with scaling up to 4 gpus. already published on git
-    checkCudaErrors(cudaSetDevice(100));
+    // Haven't coalesed the outputs from GPUs together yet
 
 
     printf("\n");
@@ -279,7 +291,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
-    checkCudaErrors(cudaMemcpy(output, arr_device[0].d_out, volumeSize * sizeof(float), cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy(output, bufferDst, outerDimx * outerDimy * outerDimz * sizeof(float), cudaMemcpyDeviceToHost));
 
     // Report time
 #ifdef GPU_PROFILING
