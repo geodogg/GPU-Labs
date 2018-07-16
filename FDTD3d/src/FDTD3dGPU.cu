@@ -276,8 +276,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     }
 
     // Haven't coalesed the outputs from GPUs together yet
-    checkCudaErrors(cudaSetDevice(100));
-
 
     printf("\n");
 
