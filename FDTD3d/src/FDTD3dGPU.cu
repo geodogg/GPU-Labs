@@ -48,7 +48,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     const int         outerDimx  = dimx + 2 * radius;
     const int         outerDimy  = dimy + 2 * radius;
     const int         outerDimz  = dimz + 2 * radius;
-    const size_t      volumeSize = outerDimx * outerDimy * outerDimz;
+    const size_t      volumeSize = outerDimx * outerDimy * outerDimz / arr_device[0].num_devices;
     const size_t      volumeSize_device = dimx * dimy * dimz / arr_device[0].num_devices;
 
     // int               deviceCount  = 0;
@@ -202,6 +202,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         offset += volumeSize_device * sizeof(float);
 
+        checkCudaErrors(cudaSetDevice(100));
     }
 
     checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
@@ -265,7 +266,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // bufferSrc = tmp;
     }
 
-    // run this. There was error with scaling up to 4 gpus. already published on git 
+    // run this. There was error with scaling up to 4 gpus. already published on git
     checkCudaErrors(cudaSetDevice(100));
 
 
