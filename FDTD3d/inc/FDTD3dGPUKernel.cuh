@@ -11,7 +11,6 @@
 
 #include "FDTD3dGPU.h"
 #include <cooperative_groups.h>
-#include <helper_functions.h>
 
 namespace cg = cooperative_groups;
 
@@ -154,7 +153,7 @@ __global__ void FiniteDifferencesKernel(float *output,
           output[outputIndex] = value;
 
           int current_device = 0;
-          checkCudaErrors(cudaGetDevice(&current_device));
+          cudaGetDevice(&current_device);
           outputFULL[outputIndex + current_device * arr_device[0].volumeSizeOffset] = value;
         }
     }
