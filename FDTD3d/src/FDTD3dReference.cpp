@@ -137,7 +137,7 @@ bool fdtdReference(float *output, const float *input, const float *coeff, const 
 
 bool compareData(const float *output, const float *reference, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
 {
-    flaot point_counter = 0;
+    float point_counter = 0;
     float error_counter = 0;
     for (int iz = -radius ; iz < dimz + radius ; iz++)
     {
