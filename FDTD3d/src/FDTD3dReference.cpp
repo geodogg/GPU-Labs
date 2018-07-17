@@ -137,6 +137,8 @@ bool fdtdReference(float *output, const float *input, const float *coeff, const 
 
 bool compareData(const float *output, const float *reference, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
 {
+    int point_counter = 0;
+    int error_counter = 0;
     for (int iz = -radius ; iz < dimz + radius ; iz++)
     {
         for (int iy = -radius ; iy < dimy + radius ; iy++)
@@ -156,10 +158,12 @@ bool compareData(const float *output, const float *reference, const int dimx, co
                         error = difference;
 
                     // Check the error is within the tolerance
+                    point_counter++;
                     if (error > tolerance)
                     {
-                        printf("Data error at point (%d,%d,%d)\t%f instead of %f\n", ix, iy, iz, *output, *reference);
+                        // printf("Data error at point (%d,%d,%d)\t%f instead of %f\n", ix, iy, iz, *output, *reference);
                         //return false;
+                        error_counter++;
                     }
                 }
 
@@ -168,6 +172,8 @@ bool compareData(const float *output, const float *reference, const int dimx, co
             }
         }
     }
+
+    printf("Out of %d total points, %d had error.\n", point_counter, error_counter);  
 
     return true;
 }
