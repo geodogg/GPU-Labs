@@ -37,7 +37,7 @@ typedef struct
     float *d_out;          // pointer to device output data
     float *d_in;           // pointer to device input data
     float *h_out;          // pointer to host location of data
-    float *in_data;         // pointer to input d_data
+    float *in_data;        // pointer to input d_data
     dim3 dimBlock;
     dim3 dimGrid;
     cudaDeviceProp deviceProp;  // cuda device properties

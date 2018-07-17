@@ -62,7 +62,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     for (int i = 0; i < arr_device[0].num_devices; i++){
         arr_device[i].paddedVolumeSize = arr_device[i].data_size_device + padding;
-        arr_device[i].volumeSizeOffset = volumeSize;
+        arr_device[i].volumeSizeOffset = arr_device[i].data_size_device;
     }
 
     const size_t paddedVolumeSize_full = outerDimx * outerDimy * outerDimz + padding;
@@ -205,7 +205,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Copy the input to the device output buffer (actually only need the halo)
         checkCudaErrors(cudaMemcpy(arr_device[i].d_out + padding, input + offset, arr_device[i].data_size_device * sizeof(float), cudaMemcpyHostToDevice));
 
-        offset += (volumeSize);
+        offset += (arr_device[i].volumeSizeOffset);
 
     }
 

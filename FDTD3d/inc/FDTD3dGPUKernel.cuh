@@ -68,11 +68,15 @@ __global__ void FiniteDifferencesKernel(float *output,
     if ((gtidx >= dimx) || (gtidy >= dimy))
         validw = false;
 
+    int current_device = 0;
+    cudaGetDevice(&current_device);
+
     // Preload the "infront" and "behind" data
     for (int i = RADIUS - 2 ; i >= 0 ; i--)
     {
         if (validr)
             behind[i] = input[inputIndex];
+        // else if (current_device + 1 < arr_device[0].num_devices)
 
         inputIndex += stride_z;
     }
@@ -91,11 +95,24 @@ __global__ void FiniteDifferencesKernel(float *output,
         inputIndex += stride_z;
     }
 
+    // int add_z = 0, minus_z = 0;
+
     // Step through the xy-planes
 #pragma unroll 9
 
     for (int iz = 0 ; iz < dimz ; iz++)
     {
+
+        // // at the start of the cuda device memory, get input data from previous device, if there is a previous device
+        // if (iz == 0 && current_device > 0) {
+        //
+        //     if (minus_z < RADIUS){
+        //         minus_z++;
+        //         iz--;
+        //     }
+        // }
+        //
+
         // Advance the slice (move the thread-front)
         for (int i = RADIUS - 1 ; i > 0 ; i--)
             behind[i] = behind[i - 1];
@@ -150,11 +167,20 @@ __global__ void FiniteDifferencesKernel(float *output,
 
         // Store the output value
         if (validw){
-          output[outputIndex] = value;
+            output[outputIndex] = value;
 
-          int current_device = 0;
-          cudaGetDevice(&current_device);
-          outputFULL[outputIndex + current_device * arr_device[0].volumeSizeOffset] = value;
+            int current_device = 0;
+            cudaGetDevice(&current_device);
+            outputFULL[outputIndex + current_device * arr_device[0].volumeSizeOffset] = value;
         }
+
+        // // at the end of the cuda device memory, get input data from next device, if there is a next device
+        // if (iz + 1 == dimz && current_device + 1 < arr_device[0].num_devices) {
+        //
+        //     if (add_z < RADIUS){
+        //         add_z++;
+        //         dimz++;
+        //     }
+        // }
     }
 }
