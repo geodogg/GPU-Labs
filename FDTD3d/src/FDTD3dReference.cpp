@@ -165,6 +165,8 @@ bool compareData(const float *output, const float *reference, const int dimx, co
                         //return false;
                         error_counter++;
                     }
+                    else
+                        printf("Data good at point (%d,%d,%d) GPU Output: \t%f CPU Reference: %f\n", ix, iy, iz, *output, *reference);
                 }
 
                 ++output;
