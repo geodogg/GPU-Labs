@@ -173,7 +173,7 @@ bool compareData(const float *output, const float *reference, const int dimx, co
         }
     }
 
-    printf("Out of %d total points, %d had error.\n", point_counter, error_counter);  
-
+    printf("Out of %d total points, %d had error.\n", point_counter, error_counter);
+    printf("That is %f had error.\n", error_counter / point_counter);  
     return true;
 }
