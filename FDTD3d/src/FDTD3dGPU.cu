@@ -313,24 +313,24 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     }
 #endif
 
-    if (bufferDst)
-    {
-        checkCudaErrors(cudaFree(bufferDst));
-    }
-
-    for (int i = 0; i < arr_device[0].num_devices; i++){
-
-        // Cleanup
-        if (arr_device[i].d_in)
-        {
-            checkCudaErrors(cudaFree(arr_device[i].d_in));
-        }
-
-        if (arr_device[i].d_out)
-        {
-            checkCudaErrors(cudaFree(arr_device[i].d_out));
-        }
-    }
+    // if (bufferDst)
+    // {
+    //     checkCudaErrors(cudaFree(bufferDst));
+    // }
+    //
+    // for (int i = 0; i < arr_device[0].num_devices; i++){
+    //
+    //     // Cleanup
+    //     if (arr_device[i].d_in)
+    //     {
+    //         checkCudaErrors(cudaFree(arr_device[i].d_in));
+    //     }
+    //
+    //     if (arr_device[i].d_out)
+    //     {
+    //         checkCudaErrors(cudaFree(arr_device[i].d_out));
+    //     }
+    // }
 
 
 #ifdef GPU_PROFILING
