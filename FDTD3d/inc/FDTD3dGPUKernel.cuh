@@ -92,7 +92,7 @@ __global__ void FiniteDifferencesKernel(float *output,
     }
 
     // Check in bounds
-    if (gtidx >= dimx + RADIUS || )
+    if (gtidx >= dimx + RADIUS)
         validr = false;
     else if ((gtidy >= dimy + RADIUS) && num_d == 1)
         validr = false;
