@@ -42,6 +42,9 @@ typedef struct
     dim3 dimGrid;
     cudaDeviceProp deviceProp;  // cuda device properties
     int num_devices;
+    int stride_z;
+    int stride_y;
+
 
 } DEVICES;
 
