@@ -255,8 +255,8 @@ bool runTest(int argc, const char **argv)
 
     // Determine volume size
     outerDimx = dimx + 2 * radius;
-    outerDimy = dimy + 2 * radius;
-    outerDimz = dimz / num__devices + 2 * radius;
+    outerDimy = dimy / num__devices + 2 * radius;
+    outerDimz = dimz + 2 * radius;
     volumeSizePerDevice = outerDimx * outerDimy * outerDimz;
 
     // Allocate memory host memory

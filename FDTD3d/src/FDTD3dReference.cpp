@@ -176,6 +176,6 @@ bool compareData(const float *output, const float *reference, const int dimx, co
     }
 
     printf("Error in %d / %d had error.\n", error_counter, point_counter);
-    printf("That is %f percent had error.\n", (double) error_counter / (double) point_counter);
+    printf("That is %f percent had error.\n", 100.0 * (double) error_counter / (double) point_counter);
     return true;
 }
