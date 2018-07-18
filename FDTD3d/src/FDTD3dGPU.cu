@@ -285,7 +285,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaEventRecord(profileEnd, 0));
 #endif
     // Wait for the kernel to complete
-    checkCudaErrors(cudaDeviceSynchronize());
+//    checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
     checkCudaErrors(cudaMemcpy(output, bufferDst, outerDimx * outerDimy * outerDimz * sizeof(float), cudaMemcpyDeviceToHost));

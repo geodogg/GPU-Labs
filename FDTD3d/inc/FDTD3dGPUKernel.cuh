@@ -197,6 +197,11 @@ __global__ void FiniteDifferencesKernel(float *output,
             //     }
             // }
 
+            // if ((GPUlast || GPUmiddle) && (gtidy <= RADIUS - 1))
+            // {
+            //
+            // }
+
             tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
             tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
 
@@ -228,19 +233,7 @@ __global__ void FiniteDifferencesKernel(float *output,
         // Store the output value
         if (validw){
             output[outputIndex] = value;
-
-            int current_device = 0;
-            cudaGetDevice(&current_device);
             outputFULL[outputIndex + current_device * arr_device[0].volumeSizeOffset] = value;
         }
-
-        // // at the end of the cuda device memory, get input data from next device, if there is a next device
-        // if (iz + 1 == dimz && current_device + 1 < arr_device[0].num_devices) {
-        //
-        //     if (add_z < RADIUS){
-        //         add_z++;
-        //         dimz++;
-        //     }
-        // }
     }
 }
