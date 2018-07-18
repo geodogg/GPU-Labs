@@ -137,8 +137,8 @@ bool fdtdReference(float *output, const float *input, const float *coeff, const 
 
 bool compareData(const float *output, const float *reference, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
 {
-    float point_counter = 0;
-    float error_counter = 0;
+    int point_counter = 0;
+    int error_counter = 0;
     for (int iz = -radius ; iz < dimz + radius ; iz++)
     {
         for (int iy = -radius ; iy < dimy + radius ; iy++)
@@ -166,7 +166,7 @@ bool compareData(const float *output, const float *reference, const int dimx, co
                         error_counter++;
                     }
                     else
-                        printf("Data good at point (%d,%d,%d) GPU Output: \t%f CPU Reference: %f\n", ix, iy, iz, *output, *reference);
+                        //printf("Data good at point (%d,%d,%d) GPU Output: \t%f CPU Reference: %f\n", ix, iy, iz, *output, *reference);
                 }
 
                 ++output;
@@ -175,7 +175,7 @@ bool compareData(const float *output, const float *reference, const int dimx, co
         }
     }
 
-    printf("Out of %d total points, %d had error.\n", point_counter, error_counter);
-    printf("That is %f percent had error.\n", error_counter / point_counter);
+    printf("Error in %d / %d had error.\n", error_counter, point_counter);
+    printf("That is %f percent had error.\n", (double) error_counter / (double) point_counter);
     return true;
 }
