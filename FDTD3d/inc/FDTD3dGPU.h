@@ -32,8 +32,8 @@ typedef struct
     int device;            // device ID
     size_t data_size_device;         // bytes of data to be processed on device
     size_t data_size_total;         // bytes of data to be processed by program
-    size_t paddedVolumeSize;
-    size_t volumeSizeOffset;        // Offset volume size
+    size_t padded_data_size_device;
+    size_t padded_data_size_total;
     float *d_out;          // pointer to device output data
     float *d_in;           // pointer to device input data
     float *h_out;          // pointer to host location of data
@@ -44,7 +44,9 @@ typedef struct
     int num_devices;
     int stride_z;
     int stride_y;
-
+    const int startingIndex;
+    const int endingIndex;            // i.e. along the gtidx = Radius index on first z layer
+    enum gpu_location { first, middle, last};
 
 } DEVICES;
 

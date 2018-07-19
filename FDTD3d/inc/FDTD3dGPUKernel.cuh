@@ -41,7 +41,8 @@ __global__ void FiniteDifferencesKernel(float *output,
 
     int inputIndex  = 0;
     int outputIndex = 0;
-    int otherGPUinputIndex = 0;
+    int prevGPUinputIndex = 0;
+    int nextGPUinputIndex = 0;
 
     float infront[RADIUS];
     float behind[RADIUS];
@@ -50,63 +51,36 @@ __global__ void FiniteDifferencesKernel(float *output,
     const int tx = ltidx + RADIUS;
     const int ty = ltidy + RADIUS;
 
-    bool prev_device = false;
-    bool GPUfirst = false;
-    bool GPUmiddle = false;
-    bool GPUlast = false;
     int num_d = arr_device[0].num_devices;
     int current_device = 0;
     cudaGetDevice(&current_device);
+    const int gpu_case = arr_device[current_device].gpu_location;
 
-    if (num_d > 1)
+    inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
+
+    if (num_d > 1 && gpu_case == first)
+        nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
+    else if (gpu_case == middle)
     {
-        if (current_device == 0)
-        {
-            GPUfirst = true;
-            arr_device[current_device].stride_y = dimx + 2 * RADIUS;                                              // the stride in the y direction
-            arr_device[current_device].stride_z = arr_device[current_device].stride_y * (dimy + RADIUS);          // the stride in the z direction
-            inputIndex += RADIUS * arr_device[current_device].stride_y + RADIUS;                                  // Advance inputIndex to start of inner volume
-            inputIndex += gtidy * arr_device[current_device].stride_y + gtidx;                                    // Advance inputIndex to target element
-        }
-        else if(current_device + 1 == num_d)
-        {
-            GPUlast = true;
-            arr_device[current_device].stride_y = dimx + 2 * RADIUS;                                                // the stride in the y direction
-            arr_device[current_device].stride_z = arr_device[current_device].stride_y * (dimy + RADIUS);            // the stride in the z direction
-            inputIndex += RADIUS;                                                                                   // Advance inputIndex to start of data
-            inputIndex += gtidy * arr_device[current_device].stride_y + gtidx;                                      // Advance inputIndex to target element
-        }
-        else
-            GPUmiddle = true;
-            arr_device[current_device].stride_y = dimx + 2 * RADIUS;                               // the stride in the y direction
-            arr_device[current_device].stride_z = arr_device[current_device].stride_y * dimy;      // the stride in the z direction
-            inputIndex += RADIUS;                                                                  // Advance inputIndex to start of inner volume
-            inputIndex += gtidy * arr_device[current_device].stride_y + gtidx;                     // Advance inputIndex to target element
+        nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
+        prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
     }
-    else
+    else if (gpu_case == last)
     {
-        arr_device[current_device].stride_y = dimx + 2 * RADIUS;                               // the stride in the y direction
-        arr_device[current_device].stride_z = arr_device[current_device].stride_y * (dimy + 2 * RADIUS);                  // the stride in the z direction
-        inputIndex += RADIUS * arr_device[current_device].stride_y + RADIUS;                   // Advance inputIndex to start of inner volume
-        inputIndex += gtidy * arr_device[current_device].stride_y + gtidx;                     // Advance inputIndex to target element
+        prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
     }
 
     // Check in bounds
-    if (gtidx >= dimx + RADIUS)
-        validr = false;
-    else if ((gtidy >= dimy + RADIUS) && num_d == 1)
-        validr = false;
-    else if ((gtidy >= dimy + RADIUS) && GPUlast)
+    if (gtidx >= dimx + RADIUS || gtidy >= dimy + RADIUS)
         validr = false;
 
     if (gtidx >= dimx)
         validw = false;
     else if ((gtidy >= dimy) && num_d == 1)
         validw = false;
-    else if ((gtidy >= dimy) && GPUlast)
+    else if ((gtidy >= dimy) && gpu_case == last )
         validw = false;
 
-    // do original method for first gpu or one gpu case
     // Preload the "infront" and "behind" data
     for (int i = RADIUS - 2 ; i >= 0 ; i--)
     {
@@ -114,6 +88,8 @@ __global__ void FiniteDifferencesKernel(float *output,
             behind[i] = input[inputIndex];
 
         inputIndex += arr_device[current_device].stride_z;
+        nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+        prevGPUinputIndex += arr_device[current_device - 1].stride_z;
     }
 
     if (validr)
@@ -121,6 +97,8 @@ __global__ void FiniteDifferencesKernel(float *output,
 
     outputIndex = inputIndex;
     inputIndex += arr_device[current_device].stride_z;
+    nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+    prevGPUinputIndex += arr_device[current_device - 1].stride_z;
 
     for (int i = 0 ; i < RADIUS ; i++)
     {
@@ -128,8 +106,9 @@ __global__ void FiniteDifferencesKernel(float *output,
             infront[i] = input[inputIndex];
 
         inputIndex += arr_device[current_device].stride_z;
+        nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+        prevGPUinputIndex += arr_device[current_device - 1].stride_z;
     }
-
 
     // Step through the xy-planes
 #pragma unroll 9
@@ -152,8 +131,8 @@ __global__ void FiniteDifferencesKernel(float *output,
 
         inputIndex  += arr_device[current_device].stride_z;
         outputIndex += arr_device[current_device].stride_z;
-        // if (prev_device)
-        //     otherGPUinputIndex += arr_device[current_device - 1].stride_z;
+        nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+        prevGPUinputIndex += arr_device[current_device - 1].stride_z;
 
         cg::sync(cta);
 
@@ -168,47 +147,33 @@ __global__ void FiniteDifferencesKernel(float *output,
         // Halo above & below
         if (ltidy < RADIUS)
         {
-            //
-            // // obtain initial 4 data points from previous device
-            // if ((GPUlast || GPUmiddle) && (gtidy <= RADIUS - 1))
-            // {
-            //     // Preload the "infront" and "behind" data
-            //     prev_device = true;
-            //     for (int i = RADIUS - 2 ; i >= 0 ; i--)
-            //     {
-            //         otherGPUinputIndex = (arr_device[current_device - 1].stride_z - arr_device[current_device - 1].stride_y) - (RADIUS - 1 - gtidy) * arr_device[current_device - 1].stride_y + gtidx + RADIUS;
-            //         if (validr)
-            //             behind[i] = arr_device[current_device - 1].d_in[otherGPUinputIndex];
-            //
-            //         otherGPUinputIndex += arr_device[current_device - 1].stride_z;
-            //     }
-            //     if (validr)
-            //         current = input[inputIndex];
-            //
-            //     outputIndex = inputIndex;
-            //     inputIndex += arr_device[current_device].stride_z;
-            //
-            //     for (int i = 0 ; i < RADIUS ; i++)
-            //     {
-            //         if (validr)
-            //             infront[i] = input[inputIndex];
-            //
-            //         inputIndex += arr_device[current_device].stride_z;
-            //     }
-            // }
 
-            // if ((GPUlast || GPUmiddle) && (gtidy <= RADIUS - 1))
-            // {
-            //
-            // }
+            if ((dimy - gtidy < RADIUS) && num_d > 1 && gpu_case == first)
+            {
+                tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+                tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
+            }
+            else if ((gtidy <= RADIUS - 1) && gpu_case == middle)
+            {
+                tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
+                tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+            }
+            else if ((dimy - gtidy < RADIUS) && gpu_case == middle)
+            {
+                tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+                tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
+            }
+            else if ((gtidy <= RADIUS - 1) && gpu_case == last)
+            {
+                tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
+                tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+            }
+            else
+            {
+                tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+                tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+            }
 
-            tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
-            tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
-
-            // //IF GPU0 and gtidy<dimy-1
-            // tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * stride_y];
-            // //else WHAT ADDRESS FROM THE OTHER GPU ???????????????
-            // tile[ltidy + worky + RADIUS][tx] = otherGPUinputIndex[???????????];
         }
 
         // Halo left & right
@@ -233,7 +198,7 @@ __global__ void FiniteDifferencesKernel(float *output,
         // Store the output value
         if (validw){
             output[outputIndex] = value;
-            outputFULL[outputIndex + current_device * arr_device[0].volumeSizeOffset] = value;
+            outputFULL[outputIndex + current_device * arr_device[current_device].data_size_device] = value;
         }
     }
 }

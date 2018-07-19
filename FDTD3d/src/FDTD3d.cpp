@@ -183,13 +183,13 @@ bool runTest(int argc, const char **argv)
     //~~~~~~~~~~~~~~~~~~~~~~~~~~!!! UPDATED HERE !!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ////////////////////////////////////////////////////////////////////////////
 
-    int num__devices = 0;
-    gpuErrchk(cudaGetDeviceCount(&num__devices));
+    int num_d = 0;
+    gpuErrchk(cudaGetDeviceCount(&num_d));
 
-    printf("Number of devices %d\n",num__devices);
+    printf("Number of devices %d\n",num_d);
 
     // Initialize an array of devices
-    DEVICES *arr_device = new DEVICES[num__devices];
+    DEVICES *arr_device = new DEVICES[num_d];
 
     // // set gpu architecture abstrations
     // for (int i = 0; i < arr_device[0].num_devices; i++){
@@ -202,13 +202,13 @@ bool runTest(int argc, const char **argv)
     // }
 
     // allocate and initialize an array of stream handles
-    cudaStream_t *streams = (cudaStream_t *) malloc(num__devices * sizeof(cudaStream_t));
-    cudaEvent_t *events = (cudaEvent_t *) malloc(num__devices * sizeof(cudaEvent_t));
+    cudaStream_t *streams = (cudaStream_t *) malloc(num_d * sizeof(cudaStream_t));
+    cudaEvent_t *events = (cudaEvent_t *) malloc(num_d * sizeof(cudaEvent_t));
 
-    for (int i = 0; i < num__devices; i++)
+    for (int i = 0; i < num_d; i++)
     {
         arr_device[i].device = i;
-        arr_device[i].num_devices = num__devices;
+        arr_device[i].num_devices = num_d;
         gpuErrchk(cudaSetDevice(arr_device[i].device));
         gpuErrchk(cudaStreamCreate(&(streams[i])));
         gpuErrchk(cudaEventCreate(&(events[i])));
@@ -253,31 +253,71 @@ bool runTest(int argc, const char **argv)
     fdtdReference(host_output, input, coeff, dimx, dimy, dimz, radius, timesteps);
     printf("fdtdReference complete\n");
 
-    // Determine volume size
-    outerDimx = dimx + 2 * radius;
-    outerDimy = dimy / num__devices + 2 * radius;
-    outerDimz = dimz + 2 * radius;
-    volumeSizePerDevice = outerDimx * outerDimy * outerDimz;
+    const int padding = (128 / sizeof(float)) - radius;
+
+    if (num_d > 1)
+    {
+        int dimy_device = dimy / num_devices;
+        // Determine volume size
+        outerDimx = dimx + 2 * radius;
+        outerDimy = dimy_device + radius;
+        outerDimz = dimz + 2 * radius;
+
+        // first GPU
+        arr_device[0].gpu_location = first;
+        arr_device[0].stride_y = dimx + 2 * radius;
+        arr_device[0].stride_z = arr_device[0].stride_y * (dimy_device + radius);
+        arr_device[0].startingIndex = radius * arr_device[0].stride_y + radius;
+        arr_device[0].endingIndex = arr_device[0].startingIndex + arr_device[0].stride_z - (radius + 1) * arr_device[0].stride_y;
+        arr_device[0].data_size_device = outerDimx * outerDimy * outerDimz;
+        arr_device[0].data_size_total = volumeSize;
+        arr_device[0].in_data = input;
+        arr_device[0].padded_data_size_device = arr_device[i].data_size_device + padding;
+        arr_device[0].padded_data_size_total = arr_device[i].data_size_total + padding;
+
+        // last GPU
+        arr_device[num_d - 1].gpu_location = last;
+        arr_device[num_d - 1].stride_y = dimx + 2 * radius;
+        arr_device[num_d - 1].stride_z = arr_device[num_d - 1].stride_y * (dimy_device + radius);
+        arr_device[num_d - 1].startingIndex = radius;
+        arr_device[num_d - 1].endingIndex = arr_device[num_d - 1].startingIndex + arr_device[num_d - 1].stride_z - (radius + 1) * arr_device[num_d - 1].stride_y;
+        arr_device[num_d - 1].data_size_device = outerDimx * outerDimy * outerDimz;
+        arr_device[num_d - 1].padded_data_size_device = arr_device[i].data_size_device + padding;
+
+        outerDimy = dimy_device;
+        // middle GPU
+        for (int i = 1; i < (num_d - 1); i++) {
+            arr_device[i].gpu_location = middle;
+            arr_device[i].stride_y = dimx + 2 * radius;
+            arr_device[i].stride_z = arr_device[i].stride_y * dimy_device;
+            arr_device[i].startingIndex = radius;
+            arr_devive[i].endingIndex = arr_devive[i].startingIndex + arr_device[i].stride_z - arr_device[i].stride_y;
+            arr_device[i].data_size_device = outerDimx * outerDimy * outerDimz;
+            arr_device[i].padded_data_size_device = arr_device[i].data_size_device + padding;
+        }
+    }
+    else if (num_d == 1)
+    {
+        arr_device[0].gpu_location = first;
+        arr_device[0].stride_y = dimx + 2 * radius;
+        arr_device[0].stride_z = arr_device[0].stride_y * (dimy + 2 * radius);
+        arr_device[0].startingIndex = radius * arr_device[0].stride_y + radius;
+        arr_device[0].endingIndex = arr_device[0].startingIndex + arr_device[0].stride_z - (radius + 1) * arr_device[0].stride_y;
+        arr_device[0].data_size_device = volumeSize;
+        arr_device[0].data_size_total = volumeSize;
+        arr_device[0].in_data = input;
+        arr_device[0].padded_data_size_device = arr_device[i].data_size_device + padding;
+        arr_device[0].padded_data_size_total = arr_device[i].data_size_total + padding;
+    }
+
 
     // Allocate memory host memory
     device_output = (float *)calloc(volumeSize, sizeof(float));
-    for (int i = 0; i < num__devices; i++) {
-        arr_device[i].h_out = (float *)calloc(volumeSizePerDevice, sizeof(float));
-        arr_device[i].data_size_device = volumeSizePerDevice;
-        arr_device[i].data_size_total = volumeSize;
-        arr_device[i].in_data = input;
-    }
 
     // Execute on the device
     printf("fdtdGPU...\n");
     fdtdGPU(streams, arr_device, device_output, input, coeff, dimx, dimy, dimz, radius, timesteps, argc, argv);
     printf("fdtdGPU complete\n");
-
-    // Determine volume size
-    outerDimx = dimx + 2 * radius;
-    outerDimy = dimy + 2 * radius;
-    outerDimz = dimz + 2 * radius;
-    volumeSize = outerDimx * outerDimy * outerDimz;
 
     // Compare the results
     float tolerance = 0.0001f;
