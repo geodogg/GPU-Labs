@@ -257,7 +257,7 @@ bool runTest(int argc, const char **argv)
 
     if (num_d > 1)
     {
-        int dimy_device = dimy / num_devices;
+        int dimy_device = dimy / num_d;
         // Determine volume size
         outerDimx = dimx + 2 * radius;
         outerDimy = dimy_device + radius;
@@ -272,8 +272,8 @@ bool runTest(int argc, const char **argv)
         arr_device[0].data_size_device = outerDimx * outerDimy * outerDimz;
         arr_device[0].data_size_total = volumeSize;
         arr_device[0].in_data = input;
-        arr_device[0].padded_data_size_device = arr_device[i].data_size_device + padding;
-        arr_device[0].padded_data_size_total = arr_device[i].data_size_total + padding;
+        arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
+        arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
 
         // last GPU
         arr_device[num_d - 1].gpu_case = last;
@@ -282,7 +282,7 @@ bool runTest(int argc, const char **argv)
         arr_device[num_d - 1].startingIndex = radius;
         arr_device[num_d - 1].endingIndex = arr_device[num_d - 1].startingIndex + arr_device[num_d - 1].stride_z - (radius + 1) * arr_device[num_d - 1].stride_y;
         arr_device[num_d - 1].data_size_device = outerDimx * outerDimy * outerDimz;
-        arr_device[num_d - 1].padded_data_size_device = arr_device[i].data_size_device + padding;
+        arr_device[num_d - 1].padded_data_size_device = arr_device[num_d - 1].data_size_device + padding;
 
         outerDimy = dimy_device;
         // middle GPU
@@ -306,8 +306,8 @@ bool runTest(int argc, const char **argv)
         arr_device[0].data_size_device = volumeSize;
         arr_device[0].data_size_total = volumeSize;
         arr_device[0].in_data = input;
-        arr_device[0].padded_data_size_device = arr_device[i].data_size_device + padding;
-        arr_device[0].padded_data_size_total = arr_device[i].data_size_total + padding;
+        arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
+        arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
     }
 
 
