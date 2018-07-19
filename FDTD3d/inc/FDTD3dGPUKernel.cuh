@@ -199,6 +199,7 @@ __global__ void FiniteDifferencesKernel(float *output,
         if (validw){
             output[outputIndex] = value;
             outputFULL[outputIndex + current_device * arr_device[current_device].data_size_device] = value;
+            fprintf ("value: %d\n", value);
         }
     }
 }
