@@ -54,18 +54,18 @@ __global__ void FiniteDifferencesKernel(float *output,
     int num_d = arr_device[0].num_devices;
     int current_device = 0;
     cudaGetDevice(&current_device);
-    const int gpu_case = arr_device[current_device].gpu_location;
+    const int gpu_case = arr_device[current_device].gpu_place;
 
     inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
 
-    if (num_d > 1 && gpu_case == first)
+    if (num_d > 1 && gpu_place == first)
         nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
-    else if (gpu_case == middle)
+    else if (gpu_place == middle)
     {
         nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
         prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
     }
-    else if (gpu_case == last)
+    else if (gpu_place == last)
     {
         prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
     }
@@ -78,7 +78,7 @@ __global__ void FiniteDifferencesKernel(float *output,
         validw = false;
     else if ((gtidy >= dimy) && num_d == 1)
         validw = false;
-    else if ((gtidy >= dimy) && gpu_case == last )
+    else if ((gtidy >= dimy) && gpu_place == last )
         validw = false;
 
     // Preload the "infront" and "behind" data
@@ -148,22 +148,22 @@ __global__ void FiniteDifferencesKernel(float *output,
         if (ltidy < RADIUS)
         {
 
-            if ((dimy - gtidy < RADIUS) && num_d > 1 && gpu_case == first)
+            if ((dimy - gtidy < RADIUS) && num_d > 1 && gpu_place == first)
             {
                 tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
                 tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
             }
-            else if ((gtidy <= RADIUS - 1) && gpu_case == middle)
+            else if ((gtidy <= RADIUS - 1) && gpu_place == middle)
             {
                 tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
                 tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
             }
-            else if ((dimy - gtidy < RADIUS) && gpu_case == middle)
+            else if ((dimy - gtidy < RADIUS) && gpu_place == middle)
             {
                 tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
                 tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
             }
-            else if ((gtidy <= RADIUS - 1) && gpu_case == last)
+            else if ((gtidy <= RADIUS - 1) && gpu_place == last)
             {
                 tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
                 tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];

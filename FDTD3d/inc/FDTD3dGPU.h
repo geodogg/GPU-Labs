@@ -27,6 +27,8 @@ typedef uint64_t memsize_t;
 
 #include <cuda_runtime.h>
 
+typedef enum { first, middle, last } gpu_location;
+
 typedef struct
 {
     int device;            // device ID
@@ -44,9 +46,9 @@ typedef struct
     int num_devices;
     int stride_z;
     int stride_y;
-    const int startingIndex;
-    const int endingIndex;            // i.e. along the gtidx = Radius index on first z layer
-    enum gpu_location { first, middle, last};
+    int startingIndex;
+    int endingIndex;            // i.e. along the gtidx = Radius index on first z layer
+    gpu_location gpu_case;
 
 } DEVICES;
 

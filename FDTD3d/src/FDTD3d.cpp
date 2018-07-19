@@ -264,7 +264,7 @@ bool runTest(int argc, const char **argv)
         outerDimz = dimz + 2 * radius;
 
         // first GPU
-        arr_device[0].gpu_location = first;
+        arr_device[0].gpu_case = first;
         arr_device[0].stride_y = dimx + 2 * radius;
         arr_device[0].stride_z = arr_device[0].stride_y * (dimy_device + radius);
         arr_device[0].startingIndex = radius * arr_device[0].stride_y + radius;
@@ -276,7 +276,7 @@ bool runTest(int argc, const char **argv)
         arr_device[0].padded_data_size_total = arr_device[i].data_size_total + padding;
 
         // last GPU
-        arr_device[num_d - 1].gpu_location = last;
+        arr_device[num_d - 1].gpu_case = last;
         arr_device[num_d - 1].stride_y = dimx + 2 * radius;
         arr_device[num_d - 1].stride_z = arr_device[num_d - 1].stride_y * (dimy_device + radius);
         arr_device[num_d - 1].startingIndex = radius;
@@ -287,7 +287,7 @@ bool runTest(int argc, const char **argv)
         outerDimy = dimy_device;
         // middle GPU
         for (int i = 1; i < (num_d - 1); i++) {
-            arr_device[i].gpu_location = middle;
+            arr_device[i].gpu_case = middle;
             arr_device[i].stride_y = dimx + 2 * radius;
             arr_device[i].stride_z = arr_device[i].stride_y * dimy_device;
             arr_device[i].startingIndex = radius;
@@ -298,7 +298,7 @@ bool runTest(int argc, const char **argv)
     }
     else if (num_d == 1)
     {
-        arr_device[0].gpu_location = first;
+        arr_device[0].gpu_case = first;
         arr_device[0].stride_y = dimx + 2 * radius;
         arr_device[0].stride_z = arr_device[0].stride_y * (dimy + 2 * radius);
         arr_device[0].startingIndex = radius * arr_device[0].stride_y + radius;
