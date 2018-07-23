@@ -302,7 +302,7 @@ bool runTest(int argc, const char **argv)
         arr_device[0].stride_y = dimx + 2 * radius;
         arr_device[0].stride_z = arr_device[0].stride_y * (dimy + 2 * radius);
         arr_device[0].startingIndex = radius * arr_device[0].stride_y + radius;
-        arr_device[0].endingIndex = arr_device[0].startingIndex + arr_device[0].stride_z - (radius + 1) * arr_device[0].stride_y;
+        arr_device[0].endingIndex = arr_device[0].startingIndex + arr_device[0].stride_z - (2 * radius + 1) * arr_device[0].stride_y;
         arr_device[0].data_size_device = volumeSize;
         arr_device[0].data_size_total = volumeSize;
         arr_device[0].in_data = input;
