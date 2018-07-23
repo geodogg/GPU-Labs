@@ -28,8 +28,6 @@ __global__ void FiniteDifferencesKernel(float *output,
                                         DEVICES *arr_device)
 {
 
-    printf ("INSIDE THE KERNEL \n");
-
     bool validr = true;
     bool validw = true;
     const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;   // device global grid index x
