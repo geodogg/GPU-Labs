@@ -293,14 +293,7 @@ bool runTest(int argc, const char **argv)
     }
     else if (num_d == 1)
     {
-        printf("\nSetting Properly on one GPU\n");
 
-        printf( arr_device[0].device);
-        printf( arr_device[0].stride_y );
-        printf( arr_device[0].stride_z );
-        printf( arr_device[0].startingIndex );
-
-        printf("\nSetting Properly on one GPU\n");
         arr_device[0].gpu_case = first;
         arr_device[0].stride_y = dimx + 2 * radius;
         arr_device[0].stride_z = arr_device[0].stride_y * (dimy + 2 * radius);
@@ -311,6 +304,15 @@ bool runTest(int argc, const char **argv)
         arr_device[0].in_data = input;
         arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
         arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
+
+        printf("\nSetting Properly on one GPU\n");
+
+        printf( arr_device[0].device);
+        printf( arr_device[0].stride_y );
+        printf( arr_device[0].stride_z );
+        printf( arr_device[0].startingIndex );
+
+        printf("\nSetting Properly on one GPU\n");
     }
 
 
