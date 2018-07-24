@@ -318,7 +318,7 @@ bool runTest(int argc, const char **argv)
     // Compare the results
     float tolerance = 0.0001f;
     printf("\nCompareData (tolerance %f)...\n", tolerance);
-    return compareData(device_output, host_output, dimx, dimy, dimz, radius, tolerance);
+    return compareData(device_output, host_output, input, dimx, dimy, dimz, radius, tolerance);
 
     cudaFree(arr_device);
     // delete[] arr_device;

@@ -21,7 +21,6 @@
 void generateRandomData(float *data, const int dimx, const int dimy, const int dimz, const float lowerBound, const float upperBound)
 {
     srand(0);
-    int counter = 0;
     for (int iz = 0 ; iz < dimz ; iz++)
     {
         for (int iy = 0 ; iy < dimy ; iy++)
@@ -29,10 +28,6 @@ void generateRandomData(float *data, const int dimx, const int dimy, const int d
             for (int ix = 0 ; ix < dimx ; ix++)
             {
                 *data = (float)(lowerBound + ((float)rand() / (float)RAND_MAX) * (upperBound - lowerBound));
-                if (counter < 1000){
-                    printf("data: %f;\n", *data);
-                    counter++;
-                }
                 ++data;
             }
         }
@@ -141,7 +136,7 @@ bool fdtdReference(float *output, const float *input, const float *coeff, const 
     return true;
 }
 
-bool compareData(const float *output, const float *reference, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
+bool compareData(const float *output, const float *reference, const float *input, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
 {
     int point_counter = 0;
     int error_counter = 0;
@@ -159,7 +154,7 @@ bool compareData(const float *output, const float *reference, const int dimx, co
                     float error;
 
                     if (counter < 1000){
-                        printf("reference: %f;   output: %f\n", *reference, *output);
+                        printf("reference: %f;   output: %f;   input: %f\n", *reference, *output, *input);
                         counter++;
                     }
 
