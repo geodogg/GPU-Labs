@@ -90,21 +90,21 @@
          if (validr)
              behind[i] = input[inputIndex];
 
-         inputIndex += arr_device[current_device].stride_z;
+         inputIndex += stride_z;
      }
 
      if (validr)
          current = input[inputIndex];
 
      outputIndex = inputIndex;
-     inputIndex += arr_device[current_device].stride_z;
+     inputIndex += stride_z;
 
      for (int i = 0 ; i < RADIUS ; i++)
      {
          if (validr)
              infront[i] = input[inputIndex];
 
-         inputIndex += arr_device[current_device].stride_z;
+         inputIndex += stride_z;
      }
 
      // Step through the xy-planes
@@ -126,8 +126,8 @@
          if (validr)
              infront[RADIUS - 1] = input[inputIndex];
 
-         inputIndex  += arr_device[current_device].stride_z;
-         outputIndex += arr_device[current_device].stride_z;
+         inputIndex  += stride_z;
+         outputIndex += stride_z;
          cg::sync(cta);
 
          // Note that for the work items on the boundary of the problem, the
@@ -141,8 +141,8 @@
          // Halo above & below
          if (ltidy < RADIUS)
          {
-             tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
-             tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+             tile[ltidy][tx]                  = input[outputIndex - RADIUS * stride_y];
+             tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * stride_y];
          }
 
          // Halo left & right
