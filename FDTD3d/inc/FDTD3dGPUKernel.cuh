@@ -53,8 +53,6 @@
 
      printf("dimx: %d  dimy: %d\n", dimx, dimy);
 
-     std::cin.ignore();
-     std::cin.get();
      // // Advance inputIndex to start of inner volume
      // inputIndex += RADIUS * stride_y + RADIUS;
      //
