@@ -248,7 +248,7 @@ LIBRARIES :=
 ################################################################################
 
 # Gencode arguments
-SMS ?= 30 35 37 50 52 60 61 70
+SMS ?= 60
 
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
@@ -301,7 +301,7 @@ FDTD3d: FDTD3d.o FDTD3dGPU.o FDTD3dReference.o
 	$(EXEC) cp $@ ../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 
 run: build
-	$(EXEC) nvprof ./FDTD3d
+	$(EXEC) CUDA_VISIBLE_DEVICES=0 nvprof ./FDTD3d
 
 clean:
 	rm -f FDTD3d FDTD3d.o FDTD3dGPU.o FDTD3dReference.o *.out core.*
