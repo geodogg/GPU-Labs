@@ -34,9 +34,10 @@ void generateRandomData(float *data, const int dimx, const int dimy, const int d
         }
     }
 
-    for (int i = 100; i < 110; i++){
+    for (int i = 0; i < 25; i++){
 
-        printf("data[%d] = %f\n", i , data[i]);
+        printf("data[%d] = %f\n", i , *data);
+        data++;
     }
 }
 
@@ -180,10 +181,11 @@ bool compareData(const float *output, const float *reference, const int dimx, co
         }
     }
 
-    for (int i = 100; i < 110; i++){
+    for (int i = 0; i < 25; i++){
 
-        printf("output[%d] = %f  ; reference[%d]  = %f \n", i, output[i], i, reference[i] );
-
+        printf("output[%d] = %f  ; reference[%d]  = %f \n", i, *output, i, *reference );
+        output++;
+        reference++;
     }
 
 
