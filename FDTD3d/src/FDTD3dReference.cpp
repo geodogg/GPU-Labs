@@ -33,6 +33,11 @@ void generateRandomData(float *data, const int dimx, const int dimy, const int d
             }
         }
     }
+
+    for (int i = 0; i < 10; i++){
+
+        printf("data[%d]\n", data[i]);
+    }
 }
 
 void generatePatternData(float *data, const int dimx, const int dimy, const int dimz, const float lowerBound, const float upperBound)
@@ -174,6 +179,13 @@ bool compareData(const float *output, const float *reference, const int dimx, co
             }
         }
     }
+
+    for (int i = 0; i < 10; i++){
+
+        printf("output[%d]   reference[%d]   \n", output[i],  reference[i] );
+
+    }
+
 
     printf("Error in %d / %d had error.\n", error_counter, point_counter);
     printf("That is %f percent had error.\n", 100.0 * (double) error_counter / (double) point_counter);
