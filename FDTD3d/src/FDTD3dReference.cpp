@@ -21,7 +21,7 @@
 void generateRandomData(float *data, const int dimx, const int dimy, const int dimz, const float lowerBound, const float upperBound)
 {
     srand(0);
-
+    int counter = 0;
     for (int iz = 0 ; iz < dimz ; iz++)
     {
         for (int iy = 0 ; iy < dimy ; iy++)
@@ -29,15 +29,16 @@ void generateRandomData(float *data, const int dimx, const int dimy, const int d
             for (int ix = 0 ; ix < dimx ; ix++)
             {
                 *data = (float)(lowerBound + ((float)rand() / (float)RAND_MAX) * (upperBound - lowerBound));
+                if (counter < 1000){
+                    printf("data: %f;\n", *data);
+                    counter++;
+                }
                 ++data;
             }
         }
     }
 
-    for (int i = 0; i < 10; i++){
 
-        printf("data[%d] = %f\n", i , data[i]);
-    }
 }
 
 void generatePatternData(float *data, const int dimx, const int dimy, const int dimz, const float lowerBound, const float upperBound)
@@ -144,6 +145,7 @@ bool compareData(const float *output, const float *reference, const int dimx, co
 {
     int point_counter = 0;
     int error_counter = 0;
+    int counter = 0;
     for (int iz = -radius ; iz < dimz + radius ; iz++)
     {
         for (int iy = -radius ; iy < dimy + radius ; iy++)
@@ -156,7 +158,10 @@ bool compareData(const float *output, const float *reference, const int dimx, co
                     float difference = fabs(*reference - *output);
                     float error;
 
-                    printf("reference: %f;   output: %f\n", *reference, *output);
+                    if (counter < 1000){
+                        printf("reference: %f;   output: %f\n", *reference, *output);
+                        counter++;
+                    }
 
                     // Determine the relative error
                     if (*reference != 0)
@@ -181,12 +186,6 @@ bool compareData(const float *output, const float *reference, const int dimx, co
             }
         }
     }
-
-    // for (int i = 0; i < 10; i++){
-    //
-    //     printf("output[%d] = %f  ; reference[%d]  = %f \n", i, output[i], i, reference[i] );
-    //
-    // }
 
 
     printf("Error in %d / %d had error.\n", error_counter, point_counter);
