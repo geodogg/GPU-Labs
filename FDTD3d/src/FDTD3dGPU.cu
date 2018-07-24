@@ -201,7 +201,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // float *tmp = bufferDst;
         // bufferDst = bufferSrc;
         // bufferSrc = tmp;
-        checkCudaErrors(cudaDeviceSynchronize());
+
 
     }
 
