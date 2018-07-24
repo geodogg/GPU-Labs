@@ -248,7 +248,7 @@ LIBRARIES :=
 ################################################################################
 
 # Gencode arguments
-SMS ?= 30 35 37 50 52 60 61 70
+SMS ?= 60
 
 ifeq ($(SMS),)
 $(info >>> WARNING - no SM architectures have been specified - waiving sample <<<)
@@ -266,11 +266,11 @@ GENCODE_FLAGS += -gencode arch=compute_$(HIGHEST_SM),code=compute_$(HIGHEST_SM)
 endif
 endif
 
+INCLUDES += -Iinc
+
 ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
 endif
-
-INCLUDES += -Iinc
 
 ################################################################################
 
