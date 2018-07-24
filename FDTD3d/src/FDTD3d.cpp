@@ -188,6 +188,9 @@ bool runTest(int argc, const char **argv)
 
     printf("Number of devices %d\n",num_d);
 
+    // Initialize an array of devices
+    // DEVICES *arr_device = new DEVICES[num_d];
+
     // Initialize an array devices on unified memory;
     DEVICES *arr_device;
     gpuErrchk(cudaMallocManaged(&arr_device, num_d * sizeof(DEVICES)));
@@ -228,7 +231,7 @@ bool runTest(int argc, const char **argv)
 
     if (num_d > 1)
     {
-        printf("GO FUCKING CRAZY");
+        printf("GO FLIPPIN CRAZY");
         int dimy_device = dimy / num_d;
         // Determine volume size
         outerDimx = dimx + 2 * radius;
@@ -286,11 +289,10 @@ bool runTest(int argc, const char **argv)
         arr_device[0].in_data = input;
         arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
         arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
-        arr_device[0].num_devices = num_d;
 
     }
     else
-        printf("HOLD THE FUCK UPPPPPP");
+        printf("HOLD THE FRONT DOOR");
 
     // allocate and initialize an array of stream handles
     cudaStream_t *streams = (cudaStream_t *) malloc(num_d * sizeof(cudaStream_t));
@@ -302,7 +304,7 @@ bool runTest(int argc, const char **argv)
         gpuErrchk(cudaSetDevice(arr_device[i].device));
         gpuErrchk(cudaStreamCreate(&(streams[i])));
         gpuErrchk(cudaEventCreate(&(events[i])));
-        gpuErrchk(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
+        //gpuErrchk(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
 
     }
 
