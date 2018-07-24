@@ -81,6 +81,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // set output device data
         checkCudaErrors(cudaMalloc((void **) (&(ptr_in)), arr_device[i].padded_data_size_device * sizeof(float)));
         arr_device[i].d_in = ptr_in;
+
+        printf("Memory Set Good\n");
+
     }
 
     float *bufferOut = 0;
@@ -130,6 +133,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
             printf("invalid block size, x (%d) and y (%d) must be >= radius (%d).\n", arr_device[i].dimBlock.x, arr_device[i].dimBlock.y, RADIUS);
             exit(EXIT_FAILURE);
         }
+        printf("GPU Abstrations Good\n");
     }
 
     int offset = 0;
@@ -147,6 +151,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         checkCudaErrors(cudaMemcpyToSymbol(stencil, (void *)coeff, (radius + 1) * sizeof(float)));
 
         offset += (arr_device[i].data_size_device);
+
+        printf("Memory Copy Good\n");
 
     }
 
