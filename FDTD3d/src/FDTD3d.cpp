@@ -191,6 +191,11 @@ bool runTest(int argc, const char **argv)
     // Initialize an array of devices
     DEVICES *arr_device = new DEVICES[num_d];
 
+    fprintf("Output sizeof DEVICES: %d\n", sizeof(DEVICES));
+
+//    gpuErrchk(cudaMallocManaged(&arr_device, )
+    // Initialize DEVICES
+
     // // set gpu architecture abstrations
     // for (int i = 0; i < arr_device[0].num_devices; i++){
     //

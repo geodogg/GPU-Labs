@@ -52,6 +52,14 @@
      int prevGPUinputIndex = 0;
      int nextGPUinputIndex = 0;
 
+
+
+     // Advance inputIndex to start of inner volume
+     inputIndex += RADIUS * stride_y + RADIUS;
+
+     // Advance inputIndex to target element
+     inputIndex += gtidy * stride_y + gtidx;
+
      inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
 
 
