@@ -156,7 +156,7 @@ bool compareData(const float *output, const float *reference, const int dimx, co
                     float difference = fabs(*reference - *output);
                     float error;
 
-                    printf("difference: %f;\n", difference);
+                    printf("reference: %f;   output: %f\n", *reference, *output);
 
                     // Determine the relative error
                     if (*reference != 0)
