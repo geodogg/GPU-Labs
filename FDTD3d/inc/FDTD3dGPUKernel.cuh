@@ -11,6 +11,7 @@
 
  #include "FDTD3dGPU.h"
  #include <cooperative_groups.h>
+ #include <iostream>
 
  namespace cg = cooperative_groups;
 
@@ -52,7 +53,8 @@
 
      printf("dimx: %d  dimy: %d\n", dimx, dimy);
 
-     cin.get();
+     std::cin.ignore();
+     std::cin.get();
      // // Advance inputIndex to start of inner volume
      // inputIndex += RADIUS * stride_y + RADIUS;
      //
