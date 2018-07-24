@@ -44,24 +44,12 @@
      cudaGetDevice(&current_device);
      const int gpu_place = arr_device[current_device].gpu_case;
 
-     const int stride_y = dimx + 2 * RADIUS;
-     const int stride_z = stride_y * (dimy + 2 * RADIUS);
-
      int inputIndex  = 0;
      int outputIndex = 0;
      int prevGPUinputIndex = 0;
      int nextGPUinputIndex = 0;
 
-
-
-     // // Advance inputIndex to start of inner volume
-     // inputIndex += RADIUS * stride_y + RADIUS;
-     //
-     // // Advance inputIndex to target element
-     // inputIndex += gtidy * stride_y + gtidx;
-
      inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
-
 
      float infront[RADIUS];
      float behind[RADIUS];
@@ -83,21 +71,21 @@
          if (validr)
              behind[i] = input[inputIndex];
 
-         inputIndex += stride_z;
+         inputIndex += arr_device[current_device].stride_z;
      }
 
      if (validr)
          current = input[inputIndex];
 
      outputIndex = inputIndex;
-     inputIndex += stride_z;
+     inputIndex += arr_device[current_device].stride_z;
 
      for (int i = 0 ; i < RADIUS ; i++)
      {
          if (validr)
              infront[i] = input[inputIndex];
 
-         inputIndex += stride_z;
+         inputIndex += arr_device[current_device].stride_z;
      }
 
      // Step through the xy-planes
@@ -119,8 +107,8 @@
          if (validr)
              infront[RADIUS - 1] = input[inputIndex];
 
-         inputIndex  += stride_z;
-         outputIndex += stride_z;
+         inputIndex  += arr_device[current_device].stride_z;
+         outputIndex += arr_device[current_device].stride_z;
          cg::sync(cta);
 
          // Note that for the work items on the boundary of the problem, the
@@ -134,8 +122,8 @@
          // Halo above & below
          if (ltidy < RADIUS)
          {
-             tile[ltidy][tx]                  = input[outputIndex - RADIUS * stride_y];
-             tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * stride_y];
+             tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+             tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
          }
 
          // Halo left & right
