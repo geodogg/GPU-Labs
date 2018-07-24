@@ -11,7 +11,6 @@
 
  #include "FDTD3dGPU.h"
  #include <cooperative_groups.h>
- #include <iostream>
 
  namespace cg = cooperative_groups;
 
@@ -54,7 +53,7 @@
      printf("dimx: %d  dimy: %d\n", dimx, dimy);
 
      int hold;
-     scanf("program waiting... %d", hold);
+     // scanf("program waiting... %d", hold);
 
      // // Advance inputIndex to start of inner volume
      // inputIndex += RADIUS * stride_y + RADIUS;
