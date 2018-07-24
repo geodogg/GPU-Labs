@@ -39,7 +39,7 @@
      cg::thread_block cta = cg::this_thread_block();
      __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
 
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
+     cuPrintf("dimx: %d  dimy: %d\n", dimx, dimy);
 
      int num_d = arr_device[0].num_devices;
      int current_device = 0;
