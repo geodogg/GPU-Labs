@@ -11,6 +11,7 @@
 
  #include "FDTD3dGPU.h"
  #include <cooperative_groups.h>
+ #include <cuda_driver>
 
  namespace cg = cooperative_groups;
 
