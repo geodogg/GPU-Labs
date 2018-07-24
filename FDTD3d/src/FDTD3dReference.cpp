@@ -156,6 +156,8 @@ bool compareData(const float *output, const float *reference, const int dimx, co
                     float difference = fabs(*reference - *output);
                     float error;
 
+                    printf("difference: %f;\n", difference);
+
                     // Determine the relative error
                     if (*reference != 0)
                         error = difference / *reference;
@@ -180,11 +182,11 @@ bool compareData(const float *output, const float *reference, const int dimx, co
         }
     }
 
-    for (int i = 0; i < 10; i++){
-
-        printf("output[%d] = %f  ; reference[%d]  = %f \n", i, output[i], i, reference[i] );
-
-    }
+    // for (int i = 0; i < 10; i++){
+    //
+    //     printf("output[%d] = %f  ; reference[%d]  = %f \n", i, output[i], i, reference[i] );
+    //
+    // }
 
 
     printf("Error in %d / %d had error.\n", error_counter, point_counter);
