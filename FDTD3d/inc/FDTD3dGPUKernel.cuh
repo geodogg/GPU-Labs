@@ -25,8 +25,7 @@
                                          const int dimx,
                                          const int dimy,
                                          const int dimz,
-                                         DEVICES *arr_device,
-                                         int current_device)
+                                         DEVICES *arr_device)
  {
      bool validr = true;
      bool validw = true;
@@ -39,6 +38,9 @@
      // Handle to thread block group
      cg::thread_block cta = cg::this_thread_block();
      __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
+
+     int current_device = 0;
+     cudaGetDevice(&current_device);
 
      const int stride_y = dimx + 2 * RADIUS;
      const int stride_z = stride_y * (dimy + 2 * RADIUS);
