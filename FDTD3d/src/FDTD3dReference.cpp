@@ -34,6 +34,8 @@ void generateRandomData(float *data, const int dimx, const int dimy, const int d
         }
     }
 
+    data+= 50000;
+
     for (int i = 0; i < 25; i++){
 
         printf("data[%d] = %f\n", i , *data);
@@ -180,6 +182,9 @@ bool compareData(const float *output, const float *reference, const int dimx, co
             }
         }
     }
+
+    output+= 50000;
+    reference+= 50000;
 
     for (int i = 0; i < 25; i++){
 
