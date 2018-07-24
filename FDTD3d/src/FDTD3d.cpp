@@ -188,37 +188,14 @@ bool runTest(int argc, const char **argv)
 
     printf("Number of devices %d\n",num_d);
 
-    // Initialize an array of devices
-    // DEVICES *arr_device = new DEVICES[num_d];
-
     // Initialize an array devices on unified memory;
     DEVICES *arr_device;
     gpuErrchk(cudaMallocManaged(&arr_device, num_d * sizeof(DEVICES)));
-
-    // allocate and initialize an array of stream handles
-    cudaStream_t *streams = (cudaStream_t *) malloc(num_d * sizeof(cudaStream_t));
-    cudaEvent_t *events = (cudaEvent_t *) malloc(num_d * sizeof(cudaEvent_t));
-
-    for (int i = 0; i < num_d; i++)
-    {
-        arr_device[i].device = i;
-        arr_device[i].num_devices = num_d;
-        gpuErrchk(cudaSetDevice(arr_device[i].device));
-        gpuErrchk(cudaStreamCreate(&(streams[i])));
-        gpuErrchk(cudaEventCreate(&(events[i])));
-        gpuErrchk(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
-
-        // Allocate intermediate memory for MC integrator
-        // and initialize RNG state
-
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ////////////////////////////////////////////////////////////////////////////
 
-//    dimz *= arr_device[0].num_devices;  // scale the data by the number of gpu's
 
     // Determine volume size
     outerDimx = dimx + 2 * radius;
@@ -305,11 +282,20 @@ bool runTest(int argc, const char **argv)
         arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
         arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
 
-        printf("\nSetting Properly on one GPU\n");
+    }
 
-        printf( "%d\n", arr_device[0].data_size_device );
+    // allocate and initialize an array of stream handles
+    cudaStream_t *streams = (cudaStream_t *) malloc(num_d * sizeof(cudaStream_t));
+    cudaEvent_t *events = (cudaEvent_t *) malloc(num_d * sizeof(cudaEvent_t));
 
-        printf("\nSetting Properly on one GPU\n");
+    for (int i = 0; i < num_d; i++)
+    {
+
+        gpuErrchk(cudaSetDevice(arr_device[i].device));
+        gpuErrchk(cudaStreamCreate(&(streams[i])));
+        gpuErrchk(cudaEventCreate(&(events[i])));
+        gpuErrchk(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
+
     }
 
 
