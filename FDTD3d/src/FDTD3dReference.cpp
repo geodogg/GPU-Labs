@@ -21,7 +21,6 @@
 void generateRandomData(float *data, const int dimx, const int dimy, const int dimz, const float lowerBound, const float upperBound)
 {
     srand(0);
-    int counter = 0;
     for (int iz = 0 ; iz < dimz ; iz++)
     {
         for (int iy = 0 ; iy < dimy ; iy++)
@@ -29,10 +28,6 @@ void generateRandomData(float *data, const int dimx, const int dimy, const int d
             for (int ix = 0 ; ix < dimx ; ix++)
             {
                 *data = (float)(lowerBound + ((float)rand() / (float)RAND_MAX) * (upperBound - lowerBound));
-                if (counter < 1000){
-                    printf("data: %f;\n", *data);
-                    counter++;
-                }
                 ++data;
             }
         }
