@@ -180,7 +180,7 @@ bool compareData(const float *output, const float *reference, const float *input
                     // else
                     //     printf("Data good at point (%d,%d,%d) GPU Output: \t%f CPU Reference: %f\n", ix, iy, iz, *output, *reference);
                 }
-
+                ++input;
                 ++output;
                 ++reference;
             }
