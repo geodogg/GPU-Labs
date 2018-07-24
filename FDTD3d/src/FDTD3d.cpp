@@ -289,6 +289,8 @@ bool runTest(int argc, const char **argv)
         arr_device[0].num_devices = num_d;
 
     }
+    else
+        printf("HOLD THE FUCK UPPPPPP");
 
     // allocate and initialize an array of stream handles
     cudaStream_t *streams = (cudaStream_t *) malloc(num_d * sizeof(cudaStream_t));
