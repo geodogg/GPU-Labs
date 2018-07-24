@@ -190,10 +190,10 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             printf("\nSetting Properly on one GPU\n");
 
-            printf( arr_device[i].device);
-            printf( arr_device[i].stride_y );
-            printf( arr_device[i].stride_z );
-            printf( arr_device[i].startingIndex );
+            printf( "%d\n", arr_device[i].device );
+            printf( "%d\n", arr_device[i].stride_y );
+            printf( "%d\n", arr_device[i].stride_z );
+            printf( "%d\n", arr_device[i].startingIndex );
 
             printf("\nSetting Properly on one GPU\n");
 
