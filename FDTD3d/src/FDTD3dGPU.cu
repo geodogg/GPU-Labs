@@ -194,7 +194,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 960 * sizeof(float), streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device);
-            cuStreamSynchronize();
+            cudaStreamSynchronize();
             cudaDeviceSynchronize();
 
             float *tmp = arr_device[i].d_out;
