@@ -270,6 +270,8 @@ ifeq ($(SAMPLE_ENABLED),0)
 EXEC ?= @echo "[@]"
 endif
 
+INCLUDES += -Iinc
+
 ################################################################################
 
 # Target rules
