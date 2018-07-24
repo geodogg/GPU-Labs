@@ -27,6 +27,8 @@
                                          const int dimz,
                                          DEVICES *arr_device)
  {
+
+     printf("In the kernel \n");
      bool validr = true;
      bool validw = true;
      const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -46,8 +48,6 @@
 
      int inputIndex  = 0;
      int outputIndex = 0;
-
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
 
      inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
 
