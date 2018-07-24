@@ -195,16 +195,6 @@ bool runTest(int argc, const char **argv)
     DEVICES *arr_device;
     gpuErrchk(cudaMallocManaged(&arr_device, num_d * sizeof(DEVICES)));
 
-    // // set gpu architecture abstrations
-    // for (int i = 0; i < arr_device[0].num_devices; i++){
-    //
-    //     if (arr_device[i].d_out == NULL)
-    //         arr_device[i].d_out = 0;
-    //
-    //     if (arr_device[i].d_in == NULL)
-    //         arr_device[i].d_in = 0;
-    // }
-
     // allocate and initialize an array of stream handles
     cudaStream_t *streams = (cudaStream_t *) malloc(num_d * sizeof(cudaStream_t));
     cudaEvent_t *events = (cudaEvent_t *) malloc(num_d * sizeof(cudaEvent_t));
@@ -261,6 +251,7 @@ bool runTest(int argc, const char **argv)
 
     if (num_d > 1)
     {
+        printf("GO FUCKING CRAZY");
         int dimy_device = dimy / num_d;
         // Determine volume size
         outerDimx = dimx + 2 * radius;
@@ -302,6 +293,9 @@ bool runTest(int argc, const char **argv)
     }
     else if (num_d == 1)
     {
+        printf("\nSetting Properly on one GPU\n");
+        printf( arr_device[0] );
+        printf("\nSetting Properly on one GPU\n");
         arr_device[0].gpu_case = first;
         arr_device[0].stride_y = dimx + 2 * radius;
         arr_device[0].stride_z = arr_device[0].stride_y * (dimy + 2 * radius);
