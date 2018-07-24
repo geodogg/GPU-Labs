@@ -307,10 +307,10 @@ bool runTest(int argc, const char **argv)
 
         printf("\nSetting Properly on one GPU\n");
 
-        printf( arr_device[0].device);
-        printf( arr_device[0].stride_y );
-        printf( arr_device[0].stride_z );
-        printf( arr_device[0].startingIndex );
+        printf( "%d\n", arr_device[0].device );
+        printf( "%d\n", arr_device[0].stride_y );
+        printf( "%d\n", arr_device[0].stride_z );
+        printf( "%d\n", arr_device[0].startingIndex );
 
         printf("\nSetting Properly on one GPU\n");
     }
