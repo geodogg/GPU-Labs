@@ -39,6 +39,8 @@
      cg::thread_block cta = cg::this_thread_block();
      __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
 
+     printf("dimx: %d  dimy: %d\n", dimx, dimy);
+
      int num_d = arr_device[0].num_devices;
      int current_device = 0;
      cudaGetDevice(&current_device);
@@ -50,10 +52,6 @@
      int inputIndex  = 0;
      int outputIndex = 0;
 
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-
-     int hold;
-     // scanf("program waiting... %d", hold);
 
      // // Advance inputIndex to start of inner volume
      // inputIndex += RADIUS * stride_y + RADIUS;
