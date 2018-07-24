@@ -281,7 +281,7 @@ bool runTest(int argc, const char **argv)
         arr_device[0].data_size_total = volumeSize;
         arr_device[0].in_data = input;
         arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
-        arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding
+        arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
         arr_device[0].num_devices = num_d;
 
     }
