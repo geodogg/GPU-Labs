@@ -187,19 +187,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
 
-
-            printf("\nSetting Properly on one GPU\n");
-
-            printf( "%d\n", arr_device[i].device );
-            printf( "%d\n", arr_device[i].stride_y );
-            printf( "%d\n", arr_device[i].stride_z );
-            printf( "%d\n", arr_device[i].startingIndex );
-
-            printf("\nSetting Properly on one GPU\n");
-
-
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 960 * sizeof(float), streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device);
-            // cudaDeviceSynchronize();
+            cudaDeviceSynchronize();
 
             float *tmp = arr_device[i].d_out;
             arr_device[i].d_out = arr_device[i].d_in;

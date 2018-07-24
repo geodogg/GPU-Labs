@@ -39,38 +39,24 @@
      cg::thread_block cta = cg::this_thread_block();
      __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
 
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-     printf("dimx: %d  dimy: %d\n", dimx, dimy);
-
      int num_d = arr_device[0].num_devices;
      int current_device = 0;
      cudaGetDevice(&current_device);
      const int gpu_place = arr_device[current_device].gpu_case;
 
-     // const int stride_y = dimx + 2 * RADIUS;
-     // const int stride_z = stride_y * (dimy + 2 * RADIUS);
+     const int stride_y = dimx + 2 * RADIUS;
+     const int stride_z = stride_y * (dimy + 2 * RADIUS);
 
      int inputIndex  = 0;
      int outputIndex = 0;
 
+     // Advance inputIndex to start of inner volume
+     inputIndex += RADIUS * stride_y + RADIUS;
 
-     // // Advance inputIndex to start of inner volume
-     // inputIndex += RADIUS * stride_y + RADIUS;
-     //
-     // // Advance inputIndex to target element
-     // inputIndex += gtidy * stride_y + gtidx;
+     // Advance inputIndex to target element
+     inputIndex += gtidy * stride_y + gtidx;
 
-     inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
+     // inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
 
      if (num_d > 1 && gpu_place == first)
          int nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;

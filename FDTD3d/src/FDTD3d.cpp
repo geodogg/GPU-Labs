@@ -305,14 +305,6 @@ bool runTest(int argc, const char **argv)
         arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
         arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
 
-        printf("\nSetting Properly on one GPU\n");
-
-        printf( "%d\n", arr_device[0].device );
-        printf( "%d\n", arr_device[0].stride_y );
-        printf( "%d\n", arr_device[0].stride_z );
-        printf( "%d\n", arr_device[0].startingIndex );
-
-        printf("\nSetting Properly on one GPU\n");
     }
 
 
