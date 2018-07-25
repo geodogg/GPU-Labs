@@ -27,8 +27,7 @@
                                          const int dimz,
                                          DEVICES *arr_device)
  {
-
-     printf("In the kernel \n");
+     
      bool validr = true;
      bool validw = true;
      const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;
