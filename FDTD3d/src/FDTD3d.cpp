@@ -188,12 +188,12 @@ bool runTest(int argc, const char **argv)
 
     printf("Number of devices %d\n",num_d);
 
-    // Initialize an array of devices
-    DEVICES *arr_device = new DEVICES[num_d];
+    // // Initialize an array of devices
+    // DEVICES *arr_device = new DEVICES[num_d];
 
     // Initialize an array devices on unified memory;
-    // DEVICES *arr_device;
-    // gpuErrchk(cudaMallocManaged(&arr_device, num_d * sizeof(DEVICES)));
+    DEVICES *arr_device;
+    gpuErrchk(cudaMallocManaged(&arr_device, num_d * sizeof(DEVICES)));
 
     ////////////////////////////////////////////////////////////////////////////
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -323,7 +323,7 @@ bool runTest(int argc, const char **argv)
     printf("\nCompareData (tolerance %f)...\n", tolerance);
     return compareData(device_output, host_output, input, dimx, dimy, dimz, radius, tolerance);
 
-    // cudaFree(arr_device);
-    delete[] arr_device;
+    cudaFree(arr_device);
+    // delete[] arr_device;
 
 }
