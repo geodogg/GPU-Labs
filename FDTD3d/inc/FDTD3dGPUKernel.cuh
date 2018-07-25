@@ -162,8 +162,6 @@
 
 namespace cg = cooperative_groups;
 
-#include <cuda_runtime.h>
-
 // Note: If you change the RADIUS, you should also change the unrolling below
 #define RADIUS 4
 
@@ -171,11 +169,11 @@ __constant__ float stencil[RADIUS + 1];
 
 __global__ void FiniteDifferencesKernel(float *output,
                                        float *outputFULL,
-                                       const float *input,
+                                       const f3loat *input,
                                        const int dimx,
                                        const int dimy,
                                        const int dimz,
-                                       DEVICES *arr_device)
+                                       DEVICES *arr_device, int current_device)
 {
 
    bool validr = true;
@@ -191,8 +189,7 @@ __global__ void FiniteDifferencesKernel(float *output,
    __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
 
    int num_d = arr_device[0].num_devices;
-   int current_device = 0;
-   cudaGetDevice(&current_device);
+
    const int gpu_place = arr_device[current_device].gpu_case;
 
    int inputIndex  = 0;
