@@ -195,7 +195,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
             checkCudaErrors(cudaMemPrefetchAsync(arr_device, arr_device[0].num_devices * sizeof(DEVICES), arr_device[i].device, streams[i]));
-            checkCudaErrors(cudaGetLastError());
 
             printf("gridx, gridy, gridz, %d, %d, %d,\nblockx, blocky, blockz, %d, %d, %d,\n", arr_device[i].dimGrid.x, arr_device[i].dimGrid.y, arr_device[i].dimGrid.z, arr_device[i].dimBlock.x, arr_device[i].dimBlock.y, arr_device[i].dimBlock.z );
 
