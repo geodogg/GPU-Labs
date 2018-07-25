@@ -231,7 +231,7 @@ bool runTest(int argc, const char **argv)
 
     if (num_d > 1)
     {
-        printf("GO FLIPPIN CRAZY");
+        printf("GO FLIPPIN CRAZY\n");
         int dimy_device = dimy / num_d;
         // Determine volume size
         outerDimx = dimx + 2 * radius;
