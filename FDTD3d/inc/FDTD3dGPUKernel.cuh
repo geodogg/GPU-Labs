@@ -310,10 +310,9 @@ __global__ void FiniteDifferencesKernel(float *output,
            output[outputIndex] = value;
            outputFULL[outputIndex + 0 * arr_device[current_device].data_size_device] = value;
        }
-
    }
 }
-ß
+
 //
 //
 // #include "FDTD3dGPU.h"
