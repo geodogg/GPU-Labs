@@ -169,7 +169,7 @@ __constant__ float stencil[RADIUS + 1];
 
 __global__ void FiniteDifferencesKernel(float *output,
                                        float *outputFULL,
-                                       const f3loat *input,
+                                       const float *input,
                                        const int dimx,
                                        const int dimy,
                                        const int dimz,
