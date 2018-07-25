@@ -27,7 +27,8 @@
                                          const int dimz,
                                          DEVICES *arr_device)
  {
-     
+
+     printf("In the kernel \n");
      bool validr = true;
      bool validw = true;
      const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -42,7 +43,7 @@
 
      int num_d = arr_device[0].num_devices;
      int current_device = 0;
-     //cudaGetDevice(&current_device);
+     cudaGetDevice(&current_device);
      const int gpu_place = arr_device[current_device].gpu_case;
 
      int inputIndex  = 0;
