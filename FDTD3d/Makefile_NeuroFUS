@@ -303,7 +303,7 @@ FDTD3d: FDTD3d.o FDTD3dGPU.o FDTD3dReference.o
 run: build
 	$(EXEC) CUDA_VISIBLE_DEVICES=0 ./FDTD3d
 
-run: build
+run_two: build
   $(EXEC) ./FDTD3d
 
 clean:
