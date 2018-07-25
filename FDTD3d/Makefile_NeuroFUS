@@ -301,7 +301,9 @@ FDTD3d: FDTD3d.o FDTD3dGPU.o FDTD3dReference.o
 	$(EXEC) cp $@ ../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 
 run: build
-	$(EXEC) CUDA_VISIBLE_DEVICES=0 ./FDTD3d
+  $(EXEC) ./FDTD3d
+
+#####	$(EXEC) CUDA_VISIBLE_DEVICES=0 ./FDTD3d
 
 clean:
 	rm -f FDTD3d FDTD3d.o FDTD3dGPU.o FDTD3dReference.o *.out core.*
