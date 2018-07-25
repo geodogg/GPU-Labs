@@ -27,6 +27,7 @@ __global__ void FiniteDifferencesKernel(float *output,
                                         const int dimz,
                                         DEVICES *arr_device)
 {
+    printf("in the kernel");
     bool validr = true;
     bool validw = true;
     const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;

@@ -193,6 +193,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
             checkCudaErrors(cudaMemPrefetchAsync(arr_device, arr_device[0].num_devices * sizeof(DEVICES), arr_device[i].device, streams[i]));
+            checkCudaErrors(cudaGetLastError());
 
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device);
 

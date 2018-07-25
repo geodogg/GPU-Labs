@@ -306,6 +306,7 @@ bool runTest(int argc, const char **argv)
         gpuErrchk(cudaEventCreate(&(events[i])));
         gpuErrchk(cudaGetDeviceProperties(&(arr_device[i].deviceProp), arr_device[i].device));
         printf("UnifiedAddressing == %d\n", arr_device[i].deviceProp.unifiedAddressing);
+        printf("concurrentManagedAccess == %d\n", arr_device[i].deviceProp.concurrentManagedAccess);
 
     }
 
