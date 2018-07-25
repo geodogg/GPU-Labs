@@ -161,6 +161,7 @@
 #include <cooperative_groups.h>
 
 namespace cg = cooperative_groups;
+namespace rt = cuda_runtime;
 
 // Note: If you change the RADIUS, you should also change the unrolling below
 #define RADIUS 4
@@ -190,7 +191,7 @@ __global__ void FiniteDifferencesKernel(float *output,
 
    int num_d = arr_device[0].num_devices;
    int current_device = 0;
-   cudaGetDevice(&current_device);
+   rt::cudaGetDevice(&current_device);
    const int gpu_place = arr_device[current_device].gpu_case;
 
    int inputIndex  = 0;
