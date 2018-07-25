@@ -157,6 +157,8 @@ bool compareData(const float *output, const float *reference, const float *input
                         printf("reference: %f;   output: %f;   input: %f\n", *reference, *output, *input);
                         counter++;
                     }
+                    else
+                        return true;
 
                     // Determine the relative error
                     if (*reference != 0)
