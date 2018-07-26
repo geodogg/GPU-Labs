@@ -341,6 +341,8 @@ __global__ void compareDataSmall(const float *output,
                         printf("output: %f;   input: %f\n", *output, *input);
                         counter++;
                     }
+                    else
+                        return;
 
                     // Determine the relative error
                     if (*input != 0)
