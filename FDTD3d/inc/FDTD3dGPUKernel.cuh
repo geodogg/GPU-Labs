@@ -295,10 +295,67 @@ __global__ void FiniteDifferencesKernel(float *output,
 
        // Update the data slice in the local tile
        // Halo above & below
+       //         if (ltidy < RADIUS)
+       //         {
+       //
+       //             if ((dimy - gtidy < RADIUS) && num_d > 1 && gpu_place == first)
+       //             {
+       //                 tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+       //                 tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
+       //             }
+       //             else if ((gtidy <= RADIUS - 1) && gpu_place == middle)
+       //             {
+       //                 tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
+       //                 tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+       //             }
+       //             else if ((dimy - gtidy < RADIUS) && gpu_place == middle)
+       //             {
+       //                 tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+       //                 tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
+       //             }
+       //             else if ((gtidy <= RADIUS - 1) && gpu_place == last)
+       //             {
+       //                 tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
+       //                 tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+       //             }
+       //             else
+       //             {
+       //                 tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+       //                 tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+       //             }
+       //
+       //         }
+
+
        if (ltidy < RADIUS)
        {
-           tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
-           tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+           // tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+           // tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+           if ((dimy - gtidy < RADIUS) && num_d > 1 && gpu_place == first)
+           {
+               tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+               tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
+           }
+           else if ((gtidy <= RADIUS - 1) && gpu_place == middle)
+           {
+               tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
+               tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+           }
+           else if ((dimy - gtidy < RADIUS) && gpu_place == middle)
+           {
+               tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+               tile[ltidy + worky + RADIUS][tx] = arr_device[current_device + 1].d_in[nextGPUinputIndex + (worky - 1) * arr_device[current_device + 1].stride_y];
+           }
+           else if ((gtidy <= RADIUS - 1) && gpu_place == last)
+           {
+               tile[ltidy][tx]                  = arr_device[current_device - 1].d_in[prevGPUinputIndex - (RADIUS - 1) * arr_device[current_device - 1].stride_y];
+               tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+           }
+           else
+           {
+               tile[ltidy][tx]                  = input[outputIndex - RADIUS * arr_device[current_device].stride_y];
+               tile[ltidy + worky + RADIUS][tx] = input[outputIndex + worky * arr_device[current_device].stride_y];
+           }
        }
 
        // Halo left & right
