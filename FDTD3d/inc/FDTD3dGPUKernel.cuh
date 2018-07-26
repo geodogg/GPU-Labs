@@ -177,7 +177,7 @@ __global__ void FiniteDifferencesKernel(float *output,
                                        int current_device,
                                        int *kernel_counter)
 {
-   //printf("INSIDE THE KERNEL FiniteDifferencesKernel\n");
+   printf("INSIDE THE KERNEL FiniteDifferencesKernel\n");
    kernel_counter++;
 
    bool validr = true;
@@ -310,6 +310,8 @@ __global__ void FiniteDifferencesKernel(float *output,
        // Store the output value
        if (validw)
        {
+           printf("value: %f\n", value);
+
            output[outputIndex] = value;
            outputFULL[outputIndex + current_device * arr_device[current_device].data_size_device] = value;
        }
