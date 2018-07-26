@@ -123,7 +123,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         arr_device[i].dimBlock.y = ((userBlockSize / k_blockDimX) < (size_t)k_blockDimMaxY) ? (userBlockSize / k_blockDimX) : (size_t)k_blockDimMaxY;
         arr_device[i].dimBlock.z = 1;
         arr_device[i].dimGrid.x = (unsigned int)ceil((float)dimx / arr_device[i].dimBlock.x);
-        arr_device[i].dimGrid.y = (unsigned int)ceil((float)dimy / arr_device[i].dimBlock.y);
+        arr_device[i].dimGrid.y = (unsigned int)ceil((float)dimy / (arr_device[i].dimBlock.y * arr_device[0].num_devices));
         arr_device[i].dimGrid.z = 1;
         printf(" for device %d\n", arr_device[i].device);
         printf(" set block size to %dx%d\n", arr_device[i].dimBlock.x, arr_device[i].dimBlock.y);
