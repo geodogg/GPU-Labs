@@ -204,19 +204,16 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaDeviceSynchronize());
 
-            checkCudaErrors(cudaMemcpy(output, bufferDst, arr_device[0].data_size_total * sizeof(float), cudaMemcpyDeviceToHost));
-
-            compareDataSmall<<<1, 1>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
-
-            checkCudaErrors(cudaSetDevice(100));
-
-            checkCudaErrors(cudaGetLastError());
-
             float *tmp = arr_device[i].d_out;
             arr_device[i].d_out = arr_device[i].d_in;
             arr_device[i].d_in = tmp;
 
         }
+
+        compareDataSmall<<<1, 1>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
+
+        checkCudaErrors(cudaSetDevice(100));
+
 
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
