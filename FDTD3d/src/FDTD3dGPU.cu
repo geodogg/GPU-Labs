@@ -203,12 +203,6 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device, arr_device[i].device);
 
-            compareDataSmall<<<dimgrid, dimblock>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
-
-            checkCudaErrors(cudaSetDevice(100));
-
-            checkCudaErrors(cudaDeviceSynchronize());
-
             dim3 dimblock;
             dim3 dimgrid;
             dimblock.x = 1;
@@ -216,7 +210,14 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
             dimblock.z = 1;
             dimgrid.x = 1;
             dimgrid.y = 1;
-            dimgrid.z = 1;
+            dimgrid.z = 1;            
+
+            compareDataSmall<<<dimgrid, dimblock>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
+
+            checkCudaErrors(cudaSetDevice(100));
+
+            checkCudaErrors(cudaDeviceSynchronize());
+
             compareDataSmall<<<dimgrid, dimblock>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
 
             checkCudaErrors(cudaDeviceSynchronize());
