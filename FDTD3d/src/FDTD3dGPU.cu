@@ -154,12 +154,13 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         offset += (arr_device[i].data_size_device);
 
+        // Copy the input to the device output buffer (actually only need the halo)
+        checkCudaErrors(cudaMemcpy(bufferOut + padding, input, arr_device[0].data_size_total * sizeof(float), cudaMemcpyHostToDevice));
+
         printf("Memory Copy Good\n");
 
     }
 
-    // Copy the input to the device output buffer (actually only need the halo)
-    checkCudaErrors(cudaMemcpy(bufferOut + padding, input, arr_device[0].data_size_total * sizeof(float), cudaMemcpyHostToDevice));
 
 #ifdef GPU_PROFILING
     // Create the events
