@@ -322,6 +322,7 @@ __global__ void compareDataSmall(const float *output,
                                  const int radius,
                                  const float tolerance)
 {
+    printf("INSIDE THE KERNEL compareDataSmall\n");
     int point_counter = 0;
     int error_counter = 0;
     int counter = 0;
