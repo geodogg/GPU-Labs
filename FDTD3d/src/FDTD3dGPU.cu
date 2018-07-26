@@ -180,6 +180,8 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
     float *bufferDst = bufferOut + padding;
 
+
+
     printf(" GPU FDTD loop\n");
 
     for (int it = 0 ; it < timesteps ; it++)
@@ -202,7 +204,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaDeviceSynchronize());
 
-            //compareDataSmall(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
+            checkCudaErrors(cudaMemcpy(output, bufferDst, arr_device[0].data_size_total * sizeof(float), cudaMemcpyDeviceToHost));
+
+            compareDataSmall(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
 
             checkCudaErrors(cudaGetLastError());
 
@@ -295,7 +299,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     return true;
 }
 
-bool compareDataSmall(const float *output, const float *input, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
+__global__ bool compareDataSmall(const float *output, const float *input, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
 {
     int point_counter = 0;
     int error_counter = 0;
@@ -339,7 +343,6 @@ bool compareDataSmall(const float *output, const float *input, const int dimx, c
             }
         }
     }
-
 
     printf("Error in %d / %d had error.\n", error_counter, point_counter);
     printf("That is %f percent had error.\n", 100.0 * (double) error_counter / (double) point_counter);
