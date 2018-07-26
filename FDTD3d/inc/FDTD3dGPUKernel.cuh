@@ -174,7 +174,8 @@ __global__ void FiniteDifferencesKernel(float *output,
                                        const int dimy,
                                        const int dimz,
                                        DEVICES *arr_device,
-                                       int current_device, int& kernel_counter)
+                                       int current_device,
+                                       int *kernel_counter)
 {
    printf("INSIDE THE KERNEL FiniteDifferencesKernel\n");
    kernel_counter++;
