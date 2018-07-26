@@ -201,7 +201,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device, arr_device[i].device);
 
             checkCudaErrors(cudaGetLastError());
-            checkCudaErrors(cudaDeviceSynchronize());
+//            checkCudaErrors(cudaDeviceSynchronize());
 
             float *tmp = arr_device[i].d_out;
             arr_device[i].d_out = arr_device[i].d_in;
@@ -228,7 +228,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     checkCudaErrors(cudaEventRecord(profileEnd, 0));
 #endif
     // Wait for the kernel to complete
-    checkCudaErrors(cudaDeviceSynchronize());
+//    checkCudaErrors(cudaDeviceSynchronize());
 
     // Read the result back, result is in bufferSrc (after final toggle)
     checkCudaErrors(cudaMemcpy(output, bufferDst, arr_device[0].data_size_total * sizeof(float), cudaMemcpyDeviceToHost));
