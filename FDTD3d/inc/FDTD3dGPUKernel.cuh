@@ -350,7 +350,7 @@ __global__ void FiniteDifferencesKernel(float *output,
        // Store the output value
        if (validw)
        {
-//           printf("value: %f\n", value);
+           printf("value: %f\n", value);
 
            output[outputIndex] = value;
            outputFULL[outputIndex + current_device * arr_device[current_device].data_size_device] = value;    // could be problem
