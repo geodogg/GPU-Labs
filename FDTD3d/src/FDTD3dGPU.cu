@@ -294,7 +294,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     return true;
 }
 
-bool compareDataSmall(const float *output, const float *input, const int dimx, const int dimy, const int dimz, const int radius)
+bool compareDataSmall(const float *output, const float *input, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
 {
     int point_counter = 0;
     int error_counter = 0;
@@ -318,7 +318,7 @@ bool compareDataSmall(const float *output, const float *input, const int dimx, c
 
                     // Determine the relative error
                     if (*input != 0)
-                        error = difference / *reference;
+                        error = difference / *input;
                     else
                         error = difference;
 
