@@ -236,6 +236,8 @@ __global__ void FiniteDifferencesKernel(float *output,
            behind[i] = input[inputIndex];
 
        inputIndex += arr_device[current_device].stride_z;
+       nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+       prevGPUinputIndex += arr_device[current_device - 1].stride_z;
    }
 
    if (validr)
@@ -243,6 +245,8 @@ __global__ void FiniteDifferencesKernel(float *output,
 
    outputIndex = inputIndex;
    inputIndex += arr_device[current_device].stride_z;
+   nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+   prevGPUinputIndex += arr_device[current_device - 1].stride_z;
 
    for (int i = 0 ; i < RADIUS ; i++)
    {
@@ -250,6 +254,8 @@ __global__ void FiniteDifferencesKernel(float *output,
            infront[i] = input[inputIndex];
 
        inputIndex += arr_device[current_device].stride_z;
+       nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+       prevGPUinputIndex += arr_device[current_device - 1].stride_z;
    }
 
    // Step through the xy-planes
@@ -273,6 +279,8 @@ __global__ void FiniteDifferencesKernel(float *output,
 
        inputIndex  += arr_device[current_device].stride_z;
        outputIndex += arr_device[current_device].stride_z;
+       nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+       prevGPUinputIndex += arr_device[current_device - 1].stride_z;
        cg::sync(cta);
 
        // Note that for the work items on the boundary of the problem, the
