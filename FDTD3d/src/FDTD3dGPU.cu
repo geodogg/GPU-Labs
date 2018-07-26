@@ -193,20 +193,17 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         for (int i = 0; i < arr_device[0].num_devices; i++){
 
-            int counter = 0;
-            int *kernel_counter = &counter;
-            checkCudaErrors(cudaMallocManaged(&kernel_counter, sizeof(int)));
             printf("for device %d\n", arr_device[i].device);
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
+
             checkCudaErrors(cudaMemPrefetchAsync(arr_device, arr_device[0].num_devices * sizeof(DEVICES), arr_device[i].device, streams[i]));
 
             printf("gridx, gridy, gridz, %d, %d, %d,\nblockx, blocky, blockz, %d, %d, %d,\n", arr_device[i].dimGrid.x, arr_device[i].dimGrid.y, arr_device[i].dimGrid.z, arr_device[i].dimBlock.x, arr_device[i].dimBlock.y, arr_device[i].dimBlock.z );
 
-            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device, arr_device[i].device, kernel_counter);
+            FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device, arr_device[i].device);
 
-            printf("kernel_counter: %d\n", *kernel_counter);
-
+            compareDataSmall<<<dimgrid, dimblock>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
 
             checkCudaErrors(cudaSetDevice(100));
 
