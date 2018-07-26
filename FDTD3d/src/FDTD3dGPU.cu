@@ -194,7 +194,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
             printf("for device %d\n", arr_device[i].device);
 
             checkCudaErrors(cudaSetDevice(arr_device[i].device));
-            checkCudaErrors(cudaMemPrefetchAsync(arr_device, arr_device[0].num_devices * sizeof(DEVICES), arr_device[i].device, streams[i]));
+            //checkCudaErrors(cudaMemPrefetchAsync(arr_device, arr_device[0].num_devices * sizeof(DEVICES), arr_device[i].device, streams[i]));
 
             printf("gridx, gridy, gridz, %d, %d, %d,\nblockx, blocky, blockz, %d, %d, %d,\n", arr_device[i].dimGrid.x, arr_device[i].dimGrid.y, arr_device[i].dimGrid.z, arr_device[i].dimBlock.x, arr_device[i].dimBlock.y, arr_device[i].dimBlock.z );
 
@@ -202,7 +202,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaDeviceSynchronize());
 
-            //compareDataSmall(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
+            compareDataSmall(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
 
             checkCudaErrors(cudaGetLastError());
 
