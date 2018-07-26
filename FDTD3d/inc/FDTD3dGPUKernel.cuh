@@ -177,7 +177,6 @@ __global__ void FiniteDifferencesKernel(float *output,
                                        int current_device,
                                        int *kernel_counter)
 {
-   printf("INSIDE THE KERNEL FiniteDifferencesKernel\n");
    kernel_counter++;
 
    bool validr = true;
