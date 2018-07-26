@@ -186,7 +186,7 @@ __global__ void FiniteDifferencesKernel(float *output,
    const int ltidy = threadIdx.y;
    const int workx = blockDim.x;
    const int worky = blockDim.y;
-   printf("IN THE KERNEL; gtidx: %d, gtidy: %d, gtidz: %d; dimy: %d\n", gtidx, gtidy, gtidz, dimy);
+   printf("IN THE KERNEL; gtidx: %d, gtidy: %d; dimy: %d\n", gtidx, gtidy, dimy);
    // Handle to thread block group
    cg::thread_block cta = cg::this_thread_block();
    __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
