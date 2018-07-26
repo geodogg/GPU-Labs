@@ -177,7 +177,7 @@ __global__ void FiniteDifferencesKernel(float *output,
                                        DEVICES *arr_device,
                                        int current_device)
 {
-
+   printf("IN THE KERNEL");
    bool validr = true;
    bool validw = true;
    const int gtidx = blockIdx.x * blockDim.x + threadIdx.x;
