@@ -198,17 +198,17 @@ __global__ void FiniteDifferencesKernel(float *output,
 
    inputIndex = arr_device[current_device].startingIndex + gtidy * arr_device[current_device].stride_y + gtidx;
 
-   // if (num_d > 1 && gpu_place == first)
-   //     int nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
-   // else if (gpu_place == middle)
-   // {
-   //     int nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
-   //     int prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
-   // }
-   // else if (gpu_place == last)
-   // {
-   //     int prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
-   // }
+   if (num_d > 1 && gpu_place == first)
+       int nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
+   else if (gpu_place == middle)
+   {
+       int nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
+       int prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
+   }
+   else if (gpu_place == last)
+   {
+       int prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
+   }
 
    float infront[RADIUS];
    float behind[RADIUS];
@@ -218,11 +218,16 @@ __global__ void FiniteDifferencesKernel(float *output,
    const int ty = ltidy + RADIUS;
 
    // Check in bounds
-   if ((gtidx >= dimx + RADIUS) || (gtidy >= dimy + RADIUS))
+   if (gtidx >= dimx + RADIUS || gtidy >= dimy + RADIUS)
        validr = false;
 
-   if ((gtidx >= dimx) || (gtidy >= dimy))
+   if (gtidx >= dimx)
        validw = false;
+   else if ((gtidy >= dimy) && num_d == 1)
+       validw = false;
+   else if ((gtidy >= dimy) && gpu_place == last )
+       validw = false;
+
 
    // Preload the "infront" and "behind" data
    for (int i = RADIUS - 2 ; i >= 0 ; i--)
