@@ -313,6 +313,63 @@ __global__ void FiniteDifferencesKernel(float *output,
     }
 }
 
+
+__global__ void compareDataSmall(const float *output,
+                                 const float *input,
+                                 const int dimx,
+                                 const int dimy,
+                                 const int dimz,
+                                 const int radius,
+                                 const float tolerance)
+{
+    int point_counter = 0;
+    int error_counter = 0;
+    int counter = 0;
+    for (int iz = -radius ; iz < dimz + radius ; iz++)
+    {
+        for (int iy = -radius ; iy < dimy + radius ; iy++)
+        {
+            for (int ix = -radius ; ix < dimx + radius ; ix++)
+            {
+                if (ix >= 0 && ix < dimx && iy >= 0 && iy < dimy && iz >= 0 && iz < dimz)
+                {
+                    // Determine the absolute difference
+                    float difference = fabs(*input - *output);
+                    float error;
+
+                    if (counter < 1000){
+                        printf("output: %f;   input: %f\n", *output, *input);
+                        counter++;
+                    }
+
+                    // Determine the relative error
+                    if (*input != 0)
+                        error = difference / *input;
+                    else
+                        error = difference;
+
+                    // Check the error is within the tolerance
+                    point_counter++;
+                    if (error > tolerance)
+                    {
+                        // printf("Data error at point (%d,%d,%d)\t%f instead of %f\n", ix, iy, iz, *output, *reference);
+                        //return false;
+                        error_counter++;
+                    }
+                    // else
+                    //     printf("Data good at point (%d,%d,%d) GPU Output: \t%f CPU Reference: %f\n", ix, iy, iz, *output, *reference);
+                }
+                ++input;
+                ++output;
+            }
+        }
+    }
+
+    printf("Error in %d / %d had error.\n", error_counter, point_counter);
+    printf("That is %f percent had error.\n", 100.0 * (double) error_counter / (double) point_counter);
+}
+
+
 //
 //
 // #include "FDTD3dGPU.h"
