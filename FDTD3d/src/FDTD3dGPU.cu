@@ -210,7 +210,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
         }
 
-        compareDataSmall<<<1, 1>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
+        compareDataSmall<<<1, 1>>>(arr_device[0].d_out, arr_device[0].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
 
         checkCudaErrors(cudaSetDevice(100));
 
