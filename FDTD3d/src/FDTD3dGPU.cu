@@ -299,7 +299,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
     return true;
 }
 
-__global__ bool compareDataSmall(const float *output, const float *input, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
+__global__ void compareDataSmall(const float *output, const float *input, const int dimx, const int dimy, const int dimz, const int radius, const float tolerance)
 {
     int point_counter = 0;
     int error_counter = 0;
@@ -346,5 +346,4 @@ __global__ bool compareDataSmall(const float *output, const float *input, const 
 
     printf("Error in %d / %d had error.\n", error_counter, point_counter);
     printf("That is %f percent had error.\n", 100.0 * (double) error_counter / (double) point_counter);
-    return true;
 }
