@@ -189,7 +189,7 @@ __global__ void FiniteDifferencesKernel(float *output,
    printf("IN THE KERNEL; gtidx: %d, gtidy: %d; dimy: %d\n", gtidx, gtidy, dimy);
    // Handle to thread block group
    cg::thread_block cta = cg::this_thread_block();
-   extern __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
+   __shared__ float tile[k_blockDimMaxY + 2 * RADIUS][k_blockDimX + 2 * RADIUS];
 
    int num_d = arr_device[0].num_devices;
 
