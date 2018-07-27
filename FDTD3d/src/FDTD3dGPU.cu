@@ -206,14 +206,14 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaGetLastError());
 
-            // dim3 dimblock;
-            // dim3 dimgrid;
-            // dimblock.x = 1;
-            // dimblock.y = 1;
-            // dimblock.z = 1;
-            // dimgrid.x = 1;
-            // dimgrid.y = 1;
-            // dimgrid.z = 1;
+            dim3 dimblock;
+            dim3 dimgrid;
+            dimblock.x = 1;
+            dimblock.y = 1;
+            dimblock.z = 1;
+            dimgrid.x = 1;
+            dimgrid.y = 1;
+            dimgrid.z = 1;
             //
             // checkCudaErrors(cudaDeviceSynchronize());
             //
