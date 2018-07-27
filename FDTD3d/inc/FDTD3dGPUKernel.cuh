@@ -204,13 +204,13 @@ __global__ void FiniteDifferencesKernel(float *output,
 
    if (num_d > 1 && gpu_place == first)
        nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
+   else if (gpu_place == last)
+   {
+       prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
+   }
    else if (gpu_place == middle)
    {
        nextGPUinputIndex = arr_device[current_device + 1].startingIndex + gtidx;
-       prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
-   }
-   else if (gpu_place == last)
-   {
        prevGPUinputIndex = arr_device[current_device - 1].endingIndex + gtidx;
    }
 
@@ -240,11 +240,16 @@ __global__ void FiniteDifferencesKernel(float *output,
            behind[i] = input[inputIndex];
 
        inputIndex += arr_device[current_device].stride_z;
-       if (num_d > 1)
+       if (num_d > 1 && gpu_place == first)
+           nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+       else if (gpu_place == last)
+           prevGPUinputIndex += arr_device[current_device - 1].stride_z;
+       else if (gpu_place == middle)
        {
            nextGPUinputIndex += arr_device[current_device + 1].stride_z;
            prevGPUinputIndex += arr_device[current_device - 1].stride_z;
        }
+
    }
 
    if (validr)
@@ -252,7 +257,11 @@ __global__ void FiniteDifferencesKernel(float *output,
 
    outputIndex = inputIndex;
    inputIndex += arr_device[current_device].stride_z;
-   if (num_d > 1)
+   if (num_d > 1 && gpu_place == first)
+       nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+   else if (gpu_place == last)
+       prevGPUinputIndex += arr_device[current_device - 1].stride_z;
+   else if (gpu_place == middle)
    {
        nextGPUinputIndex += arr_device[current_device + 1].stride_z;
        prevGPUinputIndex += arr_device[current_device - 1].stride_z;
@@ -264,7 +273,11 @@ __global__ void FiniteDifferencesKernel(float *output,
            infront[i] = input[inputIndex];
 
        inputIndex += arr_device[current_device].stride_z;
-       if (num_d > 1)
+       if (num_d > 1 && gpu_place == first)
+           nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+       else if (gpu_place == last)
+           prevGPUinputIndex += arr_device[current_device - 1].stride_z;
+       else if (gpu_place == middle)
        {
            nextGPUinputIndex += arr_device[current_device + 1].stride_z;
            prevGPUinputIndex += arr_device[current_device - 1].stride_z;
@@ -292,7 +305,11 @@ __global__ void FiniteDifferencesKernel(float *output,
 
        inputIndex  += arr_device[current_device].stride_z;
        outputIndex += arr_device[current_device].stride_z;
-       if (num_d > 1)
+       if (num_d > 1 && gpu_place == first)
+           nextGPUinputIndex += arr_device[current_device + 1].stride_z;
+       else if (gpu_place == last)
+           prevGPUinputIndex += arr_device[current_device - 1].stride_z;
+       else if (gpu_place == middle)
        {
            nextGPUinputIndex += arr_device[current_device + 1].stride_z;
            prevGPUinputIndex += arr_device[current_device - 1].stride_z;
