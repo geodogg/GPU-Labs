@@ -227,10 +227,12 @@ __global__ void FiniteDifferencesKernel(float *output,
 
    if (gtidx >= dimx)
        validw = false;
-   else if ((gtidy >= dimy) && num_d == 1)
+   if (gtidy >= dimy)
        validw = false;
-   else if ((gtidy >= dimy) && gpu_place == last )
-       validw = false;
+   // else if ((gtidy >= dimy) && num_d == 1)
+   //     validw = false;
+   // else if ((gtidy >= dimy) && gpu_place == last )
+   //     validw = false;
 
 
    // Preload the "infront" and "behind" data
