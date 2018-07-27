@@ -214,7 +214,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
             dimgrid.y = 1;
             dimgrid.z = 1;
 
-            checkCudaErrors(cudaDeviceSynchronize());
+            //checkCudaErrors(cudaDeviceSynchronize());
 
             compareDataSmall<<<dimgrid, dimblock>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
 
