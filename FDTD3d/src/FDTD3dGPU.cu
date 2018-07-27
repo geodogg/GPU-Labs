@@ -194,7 +194,7 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
         // Launch the kernel
         printf("launch kernel\n");
 
-        for (int i = 0; i < arr_device[0].num_devices; i++){
+        for (int i = 1; i < arr_device[0].num_devices; i++){
 
             printf("for device %d\n", arr_device[i].device);
 
