@@ -203,9 +203,9 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
 
             checkCudaErrors(cudaMemPrefetchAsync(arr_device, arr_device[0].num_devices * sizeof(DEVICES), arr_device[i].device, streams[i]));
 
-            printf("gridx, gridy, gridz, %d, %d, %d,\nblockx, blocky, blockz, %d, %d, %d,\n", arr_device[i].dimGrid.x, arr_device[i].dimGrid.y, arr_device[i].dimGrid.z, arr_device[i].dimBlock.x, arr_device[i].dimBlock.y, arr_device[i].dimBlock.z );
-
             FiniteDifferencesKernel<<<arr_device[i].dimGrid, arr_device[i].dimBlock, 0, streams[i]>>>(arr_device[i].d_out, bufferDst, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, arr_device, arr_device[i].device);
+
+            checkCudaErrors(cudaGetLastError());
 
             // dim3 dimblock;
             // dim3 dimgrid;
@@ -220,16 +220,13 @@ bool fdtdGPU(cudaStream_t *streams, DEVICES *arr_device, float *output, const fl
             //
             // compareDataSmall<<<dimgrid, dimblock>>>(arr_device[i].d_out, arr_device[i].d_in, dimx, dimy / arr_device[0].num_devices, dimz, radius, 0.000100);
 
-            checkCudaErrors(cudaDeviceSynchronize());
-
-            checkCudaErrors(cudaGetLastError());
-
-
             float *tmp = arr_device[i].d_out;
             arr_device[i].d_out = arr_device[i].d_in;
             arr_device[i].d_in = tmp;
 
         }
+        
+        checkCudaErrors(cudaDeviceSynchronize());
 
         // Toggle the buffers
         // Visual Studio 2005 does not like std::swap
