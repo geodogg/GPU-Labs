@@ -277,7 +277,7 @@ endif
 # Target rules
 all: build
 
-build: hello
+build: MonteCarloMultiGPU
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -286,16 +286,25 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-hello.o: hello.cu
+MonteCarloMultiGPU.o:MonteCarloMultiGPU.cpp
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-hello: hello.o
-	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+MonteCarlo_gold.o:MonteCarlo_gold.cpp
+  $(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+MonteCarlo_kernel.o:MonteCarlo_kernel.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $É -c $<
+
+multithreading.o:multithreading.cpp
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $É -c $<
+
+MonteCarloMultiGPU: MonteCarloMultiGPU.o MonteCarlo_gold.o MonteCarlo_kernel.o multithreading.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $É $+ $(LIBRARIES)
 
 run: build
-	$(EXEC) CUDA_VISIBLE_DEVICES=0 ./hello
+	$(EXEC) CUDA_VISIBLE_DEVICES=0 ./MonteCarloMultiGPU
 
 clean:
-	rm -f hello *.o debug.txt *.out
+  rm -f MonteCarloMultiGPU MonteCarloMultiGPU.o MonteCarlo_gold.o MonteCarlo_kernel.o multithreading.o
 
 clobber: clean
