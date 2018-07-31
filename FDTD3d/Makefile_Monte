@@ -305,6 +305,6 @@ run: build
 	$(EXEC) CUDA_VISIBLE_DEVICES=0 ./MonteCarloMultiGPU
 
 clean:
-  rm -f MonteCarloMultiGPU MonteCarloMultiGPU.o MonteCarlo_gold.o MonteCarlo_kernel.o multithreading.o
+	rm -f MonteCarloMultiGPU MonteCarloMultiGPU.o MonteCarlo_gold.o MonteCarlo_kernel.o multithreading.o
 
 clobber: clean
