@@ -231,13 +231,11 @@ bool runTest(int argc, const char **argv)
 
     if (num_d > 1)
     {
-        printf("GO FLIPPIN CRAZY\n");
+        printf("GO CRAZY\n");
         int dimy_device = dimy / num_d;
-        // Determine volume size
         outerDimx = dimx + 2 * radius;
         outerDimy = dimy_device + radius;
         outerDimz = dimz + 2 * radius;
-
         // first GPU
         arr_device[0].num_devices = num_d;
         arr_device[0].device = 0;
@@ -261,7 +259,6 @@ bool runTest(int argc, const char **argv)
         arr_device[num_d - 1].endingIndex = arr_device[num_d - 1].startingIndex + arr_device[num_d - 1].stride_z - (radius + 1) * arr_device[num_d - 1].stride_y;
         arr_device[num_d - 1].data_size_device = outerDimx * outerDimy * outerDimz;
         arr_device[num_d - 1].padded_data_size_device = arr_device[num_d - 1].data_size_device + padding;
-
         outerDimy = dimy_device;
         // middle GPU
         for (int i = 1; i < (num_d - 1); i++) {
@@ -289,7 +286,6 @@ bool runTest(int argc, const char **argv)
         arr_device[0].in_data = input;
         arr_device[0].padded_data_size_device = arr_device[0].data_size_device + padding;
         arr_device[0].padded_data_size_total = arr_device[0].data_size_total + padding;
-
     }
     else
         printf("HOLD THE FRONT DOOR");
@@ -309,7 +305,6 @@ bool runTest(int argc, const char **argv)
         printf("concurrentManagedAccess == %d\n", arr_device[i].deviceProp.concurrentManagedAccess);
 
     }
-
 
     // Allocate memory host memory
     device_output = (float *)calloc(volumeSize, sizeof(float));

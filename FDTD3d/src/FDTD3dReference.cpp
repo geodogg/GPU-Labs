@@ -153,11 +153,6 @@ bool compareData(const float *output, const float *reference, const float *input
                     float difference = fabs(*reference - *output);
                     float error;
 
-                    if (counter < 1000){
-                        printf("reference: %f;   output: %f;   input: %f\n", *reference, *output, *input);
-                        counter++;
-                    }
-
                     // Determine the relative error
                     if (*reference != 0)
                         error = difference / *reference;
@@ -170,6 +165,11 @@ bool compareData(const float *output, const float *reference, const float *input
                     {
                         // printf("Data error at point (%d,%d,%d)\t%f instead of %f\n", ix, iy, iz, *output, *reference);
                         //return false;
+
+                        if (counter < 1000){
+                            printf("reference: %f;   output: %f;   input: %f\n", *reference, *output, *input);
+                            counter++;
+                        }
                         error_counter++;
                     }
                     // else

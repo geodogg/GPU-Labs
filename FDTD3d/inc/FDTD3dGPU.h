@@ -31,24 +31,24 @@ typedef enum { first, middle, last } gpu_location;
 
 typedef struct
 {
-    int device;            // device ID
-    size_t data_size_device;         // bytes of data to be processed on device
+    int device;                     // device ID
+    size_t data_size_device;        // bytes of data to be processed on device
     size_t data_size_total;         // bytes of data to be processed by program
-    size_t padded_data_size_device;
-    size_t padded_data_size_total;
+    size_t padded_data_size_device; // padding of current device data that FDTD3d utilizes
+    size_t padded_data_size_total;  // padding of the total data
     float *d_out;          // pointer to device output data
     float *d_in;           // pointer to device input data
     float *h_out;          // pointer to host location of data
     float *in_data;        // pointer to input d_data
-    dim3 dimBlock;
-    dim3 dimGrid;
+    dim3 dimBlock;         // block dimensions of GPU
+    dim3 dimGrid;          // grid dimensions of GPU
     cudaDeviceProp deviceProp;  // cuda device properties
-    int num_devices;
-    int stride_z;
-    int stride_y;
-    int startingIndex;
+    int num_devices;            // number of devices
+    int stride_z;               // the stride used to get to the next layer of the input data at a given xy point
+    int stride_y;               // the stride used to get to the next y location at a given x point
+    int startingIndex;          // starting index of current devices
     int endingIndex;            // i.e. along the gtidx = Radius index on first z layer
-    gpu_location gpu_case;
+    gpu_location gpu_case;      // gpu_case indicates which gpu location the current gpu is at
 
 } DEVICES;
 
